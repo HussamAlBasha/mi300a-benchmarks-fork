@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <errno.h>
+#include <numa.h>
 
 #define CHECK_HIP(x)                                     \
 do{                                                      \
@@ -95,6 +96,30 @@ void measure()
         }
     }
     fclose(fp);
+
+    struct bitmask *mem_mask = numa_get_membind();
+    if (numa_bitmask_weight(mem_mask) == 1) {
+        for (int node = 0;; node++) {
+            if (!numa_bitmask_isbitset(mem_mask, node))
+                continue;
+
+            int device = -1;
+            CHECK_HIP(hipGetDevice(&device));
+            if (device != node) {
+                fprintf(stderr, "HIP device %d does not match numa node %d\n", device, node);
+                exit(1);
+            }
+
+            long free = 0;
+            if (numa_node_size(node, &free) < 0) {
+                fprintf(stderr, "numa_node_size failed\n");
+                abort();
+            }
+            out << "numa_free\t" << free << std::endl;
+            break;
+        }
+    }
+    numa_bitmask_free(mem_mask);
 }
 
 void *alloc_malloc()
@@ -157,8 +182,8 @@ void cpu_write(void *p)
 
 void gpu_read(void *p)
 {
-    /* TBD */
-    abort();
+    fprintf(stderr, "gpu_read not implemented\n");
+    exit(1);
 }
 
 const int TPB = 256;
