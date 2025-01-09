@@ -5,7 +5,18 @@
 #include <sys/mman.h>
 #include <errno.h>
 
+#define CHECK_HIP(x)                                     \
+do{                                                      \
+    hipError_t err = x;                                  \
+    if(hipSuccess != err){                               \
+        printf("HIP Error (%s:%d): %s\n",          	 \
+         __FILE__, __LINE__, hipGetErrorString(err));    \
+        abort();                                         \
+    }                                                    \
+}while(0)
+
 const size_t SIZE = 10*1024*1024;
+//const size_t SIZE = 1*1024*1024*1024;
 
 const char *FILENAME = "getmem_file";
 int file_fd = -1;
@@ -24,8 +35,7 @@ void measure()
 
     out << "hipMemGetInfo\t";
     size_t free, total;
-    if (hipSuccess != hipMemGetInfo(&free, &total))
-        abort();
+    CHECK_HIP(hipMemGetInfo(&free, &total));
     out << free << std::endl;
 
     FILE *fp = fopen("/proc/meminfo", "r");
@@ -114,24 +124,21 @@ void *alloc_mmap_file()
 void *alloc_hipMalloc()
 {
     void *p;
-    if (hipSuccess != hipMalloc(&p, SIZE))
-        abort();
+    CHECK_HIP(hipMalloc(&p, SIZE));
     return p;
 }
 
 void *alloc_hipHostMalloc()
 {
     void *p;
-    if (hipSuccess != hipHostMalloc(&p, SIZE))
-        abort();
+    CHECK_HIP(hipHostMalloc(&p, SIZE));
     return p;
 }
 
 void *alloc_hipMallocManaged()
 {
     void *p;
-    if (hipSuccess != hipMallocManaged(&p, SIZE))
-        abort();
+    CHECK_HIP(hipMallocManaged(&p, SIZE));
     return p;
 }
 
@@ -154,10 +161,28 @@ void gpu_read(void *p)
     abort();
 }
 
+const int TPB = 256;
+const int STRIDE = 1024;
+
+__global__ void memset_kernel(char *p, char x, size_t n)
+{
+    size_t id = blockDim.x * blockIdx.x + threadIdx.x;
+
+    size_t m = STRIDE;
+    if (STRIDE*id >= n)
+        m = 0;
+    else if (STRIDE*(id+1)-1 >= n)
+        m = STRIDE*(id+1)-n;
+
+    for (size_t i = 0; i < m; i++)
+        p[STRIDE*id + i] = x;
+}
+
 void gpu_write(void *p)
 {
-    if (hipSuccess != hipMemset(p, 123, SIZE))
-        abort();
+    //CHECK_HIP(hipMemset(p, 123, SIZE));
+    memset_kernel<<<(SIZE+TPB-1)/TPB, TPB>>>((char *)p, 123, SIZE);
+    CHECK_HIP(hipDeviceSynchronize());
 }
 
 struct allocator {
@@ -183,11 +208,9 @@ int main(int argc, char **argv)
     bool touch_gpu = false;
 
     // Ensure everything is initialized before we start experimenting
-    if (hipSuccess != hipInit(0))
-        abort();
+    CHECK_HIP(hipInit(0));
     void *q = alloc_hipMalloc();
-    if (hipSuccess != hipMemset(q, 312, SIZE))
-        abort();
+    CHECK_HIP(hipMemset(q, 312, SIZE));
 
     if (argc > 1) {
         for (allocator *a = allocs; a->name; a++)
