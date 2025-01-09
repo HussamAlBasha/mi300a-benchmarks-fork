@@ -180,31 +180,30 @@ int main(int argc, char** argv)
     int N, blockSize;
     parse_options(argc, argv, SI, N, blockSize);
 
-
     if (optind+1 != argc) {
         printf("select alloc method\n");
         return 1;
     }
 
     if (!strcmp(argv[optind], "malloc")) {
-	    d_a = (real *)malloc(sizeof(real)*N);
-	    d_b = (real *)malloc(sizeof(real)*N);
-	    d_c = (real *)malloc(sizeof(real)*N);
+        d_a = (real *)malloc(sizeof(real)*N);
+        d_b = (real *)malloc(sizeof(real)*N);
+        d_c = (real *)malloc(sizeof(real)*N);
     } else if (!strcmp(argv[optind], "hipMalloc")) {
-	    hipMalloc((void**)&d_a, sizeof(real)*N);
-	    hipMalloc((void**)&d_b, sizeof(real)*N);
-	    hipMalloc((void**)&d_c, sizeof(real)*N);
+        hipMalloc((void**)&d_a, sizeof(real)*N);
+        hipMalloc((void**)&d_b, sizeof(real)*N);
+        hipMalloc((void**)&d_c, sizeof(real)*N);
     } else if (!strcmp(argv[optind], "hipHostMalloc")) {
-	    hipHostMalloc((void**)&d_a, sizeof(real)*N);
-	    hipHostMalloc((void**)&d_b, sizeof(real)*N);
-	    hipHostMalloc((void**)&d_c, sizeof(real)*N);
+        hipHostMalloc((void**)&d_a, sizeof(real)*N);
+        hipHostMalloc((void**)&d_b, sizeof(real)*N);
+        hipHostMalloc((void**)&d_c, sizeof(real)*N);
     } else if (!strcmp(argv[optind], "hipMallocManaged")) {
-	    hipMallocManaged((void**)&d_a, sizeof(real)*N);
-	    hipMallocManaged((void**)&d_b, sizeof(real)*N);
-	    hipMallocManaged((void**)&d_c, sizeof(real)*N);
+        hipMallocManaged((void**)&d_a, sizeof(real)*N);
+        hipMallocManaged((void**)&d_b, sizeof(real)*N);
+        hipMallocManaged((void**)&d_c, sizeof(real)*N);
     } else {
-	    printf("select alloc method\n");
-	    return 1;
+        printf("select alloc method\n");
+        return 1;
     }
 
     printf(" STREAM Benchmark implementation in HIP\n");
@@ -287,7 +286,6 @@ int main(int argc, char** argv)
                 mintime[j],
                 maxtime[j]);
     }
-
 
     /* Free memory on device */
     //hipFree(d_a);
