@@ -62,6 +62,16 @@ THE SOFTWARE.
 # define MAX(x,y) ((x)>(y)?(x):(y))
 # endif
 
+#define CHECK_HIP(x)                                     \
+do{                                                      \
+    hipError_t err = x;                                  \
+    if(hipSuccess != err){                               \
+        printf("HIP Error (%s:%d): %s\n",          	 \
+         __FILE__, __LINE__, hipGetErrorString(err));    \
+        abort();                                         \
+    }                                                    \
+}while(0)
+
 typedef double real;
 
 static double   avgtime[4] = {0}, maxtime[4] = {0},
@@ -190,17 +200,24 @@ int main(int argc, char** argv)
         d_b = (real *)malloc(sizeof(real)*N);
         d_c = (real *)malloc(sizeof(real)*N);
     } else if (!strcmp(argv[optind], "hipMalloc")) {
-        hipMalloc((void**)&d_a, sizeof(real)*N);
-        hipMalloc((void**)&d_b, sizeof(real)*N);
-        hipMalloc((void**)&d_c, sizeof(real)*N);
+        CHECK_HIP(hipMalloc((void**)&d_a, sizeof(real)*N));
+        CHECK_HIP(hipMalloc((void**)&d_b, sizeof(real)*N));
+        CHECK_HIP(hipMalloc((void**)&d_c, sizeof(real)*N));
     } else if (!strcmp(argv[optind], "hipHostMalloc")) {
-        hipHostMalloc((void**)&d_a, sizeof(real)*N);
-        hipHostMalloc((void**)&d_b, sizeof(real)*N);
-        hipHostMalloc((void**)&d_c, sizeof(real)*N);
+        CHECK_HIP(hipHostMalloc((void**)&d_a, sizeof(real)*N));
+        CHECK_HIP(hipHostMalloc((void**)&d_b, sizeof(real)*N));
+        CHECK_HIP(hipHostMalloc((void**)&d_c, sizeof(real)*N));
     } else if (!strcmp(argv[optind], "hipMallocManaged")) {
-        hipMallocManaged((void**)&d_a, sizeof(real)*N);
-        hipMallocManaged((void**)&d_b, sizeof(real)*N);
-        hipMallocManaged((void**)&d_c, sizeof(real)*N);
+        CHECK_HIP(hipMallocManaged((void**)&d_a, sizeof(real)*N));
+        CHECK_HIP(hipMallocManaged((void**)&d_b, sizeof(real)*N));
+        CHECK_HIP(hipMallocManaged((void**)&d_c, sizeof(real)*N));
+    } else if (!strcmp(argv[optind], "malloc+register")) {
+        d_a = (real *)malloc(sizeof(real)*N);
+        d_b = (real *)malloc(sizeof(real)*N);
+        d_c = (real *)malloc(sizeof(real)*N);
+        CHECK_HIP(hipHostRegister(d_a, sizeof(real)*N, hipHostRegisterDefault));
+        CHECK_HIP(hipHostRegister(d_b, sizeof(real)*N, hipHostRegisterDefault));
+        CHECK_HIP(hipHostRegister(d_c, sizeof(real)*N, hipHostRegisterDefault));
     } else {
         printf("select alloc method\n");
         return 1;
@@ -233,22 +250,22 @@ int main(int argc, char** argv)
     {
         times[0][k]= mysecond();
         STREAM_Copy<real><<<dimGrid, dimBlock, 0, 0>>>(d_a, d_c, N);
-        hipDeviceSynchronize();
+        CHECK_HIP(hipDeviceSynchronize());
         times[0][k]= mysecond() -  times[0][k];
 
         times[1][k]= mysecond();
         STREAM_Scale<real><<<dimGrid, dimBlock, 0, 0>>>(d_b, d_c, scalar, N);
-        hipDeviceSynchronize();
+        CHECK_HIP(hipDeviceSynchronize());
         times[1][k]= mysecond() -  times[1][k];
 
         times[2][k]= mysecond();
         STREAM_Add<real><<<dimGrid, dimBlock, 0, 0>>>(d_a, d_b, d_c, N);
-        hipDeviceSynchronize();
+        CHECK_HIP(hipDeviceSynchronize());
         times[2][k]= mysecond() -  times[2][k];
 
         times[3][k]= mysecond();
         STREAM_Triad<real><<<dimGrid, dimBlock, 0, 0>>>(d_b, d_c, d_a, scalar, N);
-        hipDeviceSynchronize();
+        CHECK_HIP(hipDeviceSynchronize());
         times[3][k]= mysecond() -  times[3][k];
     }
 
