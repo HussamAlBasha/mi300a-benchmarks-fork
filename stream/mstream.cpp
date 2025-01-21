@@ -49,6 +49,9 @@
 
 #include <stdlib.h>
 #include "hip/hip_runtime.h"
+#include <sys/mman.h>
+#include <iostream>
+#include <errno.h>
 
 /*-----------------------------------------------------------------------
  * INSTRUCTIONS:
@@ -180,6 +183,20 @@
 #define STREAM_TYPE double
 #endif
 
+#define FAIL(a) do { std::cerr << "FAIL: " << a << " (" << __FILE__ << ":" << __LINE__ << ")" << std::endl; abort(); } while (0)
+#define CHECK(a) do { if (!(a)) FAIL("check " #a); } while (0)
+#define CHECK_ERRNO(a) do { if ((a) != 0) FAIL(strerror(errno) << " in " #a); } while (0)
+
+#define CHECK_HIP(x)                                     \
+do{                                                      \
+    hipError_t err = x;                                  \
+    if(hipSuccess != err){                               \
+        printf("HIP Error (%s:%d): %s\n",          	 \
+         __FILE__, __LINE__, hipGetErrorString(err));    \
+        abort();                                         \
+    }                                                    \
+}while(0)
+
 /*
 static STREAM_TYPE	a[STREAM_ARRAY_SIZE+OFFSET],
 			b[STREAM_ARRAY_SIZE+OFFSET],
@@ -232,21 +249,34 @@ main(int argc, char **argv)
 	    b = (STREAM_TYPE *)malloc(s);
 	    c = (STREAM_TYPE *)malloc(s);
     } else if (!strcmp(argv[1], "hipMalloc")) {
-	    hipMalloc(&a, s);
-	    hipMalloc(&b, s);
-	    hipMalloc(&c, s);
+	    CHECK_HIP(hipMalloc(&a, s));
+	    CHECK_HIP(hipMalloc(&b, s));
+	    CHECK_HIP(hipMalloc(&c, s));
     } else if (!strcmp(argv[1], "hipHostMalloc")) {
-	    hipHostMalloc(&a, s);
-	    hipHostMalloc(&b, s);
-	    hipHostMalloc(&c, s);
+	    CHECK_HIP(hipHostMalloc(&a, s));
+	    CHECK_HIP(hipHostMalloc(&b, s));
+	    CHECK_HIP(hipHostMalloc(&c, s));
     } else if (!strcmp(argv[1], "hipMallocManaged")) {
-	    hipMallocManaged(&a, s);
-	    hipMallocManaged(&b, s);
-	    hipMallocManaged(&c, s);
+	    CHECK_HIP(hipMallocManaged(&a, s));
+	    CHECK_HIP(hipMallocManaged(&b, s));
+	    CHECK_HIP(hipMallocManaged(&c, s));
+    } else if (!strcmp(argv[1], "posix_memalign")) {
+        size_t align = 2*1024*1024;
+	    CHECK(!posix_memalign((void**)&a, align, s));
+	    CHECK(!posix_memalign((void**)&b, align, s));
+	    CHECK(!posix_memalign((void**)&c, align, s));
     } else {
 	    printf("select alloc method\n");
 	    return 1;
     }
+
+    /* CHECK_ERRNO(madvise(a, s, MADV_HUGEPAGE)); */
+    /* CHECK_ERRNO(madvise(b, s, MADV_HUGEPAGE)); */
+    /* CHECK_ERRNO(madvise(c, s, MADV_HUGEPAGE)); */
+
+    /* CHECK_ERRNO(madvise(a, s, MADV_COLLAPSE)); */
+    /* CHECK_ERRNO(madvise(b, s, MADV_COLLAPSE)); */
+    /* CHECK_ERRNO(madvise(c, s, MADV_COLLAPSE)); */
 
     /* --- SETUP --- determine precision and check timing --- */
 

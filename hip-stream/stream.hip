@@ -207,10 +207,23 @@ int main(int argc, char** argv)
         CHECK_HIP(hipHostMalloc((void**)&d_a, sizeof(real)*N));
         CHECK_HIP(hipHostMalloc((void**)&d_b, sizeof(real)*N));
         CHECK_HIP(hipHostMalloc((void**)&d_c, sizeof(real)*N));
+    } else if (!strcmp(argv[optind], "hipHostMallocNonCoherent")) {
+        CHECK_HIP(hipHostMalloc((void**)&d_a, sizeof(real)*N, hipHostMallocNonCoherent));
+        CHECK_HIP(hipHostMalloc((void**)&d_b, sizeof(real)*N, hipHostMallocNonCoherent));
+        CHECK_HIP(hipHostMalloc((void**)&d_c, sizeof(real)*N, hipHostMallocNonCoherent));
     } else if (!strcmp(argv[optind], "hipMallocManaged")) {
         CHECK_HIP(hipMallocManaged((void**)&d_a, sizeof(real)*N));
         CHECK_HIP(hipMallocManaged((void**)&d_b, sizeof(real)*N));
         CHECK_HIP(hipMallocManaged((void**)&d_c, sizeof(real)*N));
+    } else if (!strcmp(argv[optind], "hipMallocManagedCpu")) {
+        CHECK_HIP(hipMallocManaged((void**)&d_a, sizeof(real)*N));
+        CHECK_HIP(hipMallocManaged((void**)&d_b, sizeof(real)*N));
+        CHECK_HIP(hipMallocManaged((void**)&d_c, sizeof(real)*N));
+        for (int i = 0; i < N; i++) {
+            d_a[i] = 2.f;
+            d_b[i] = .5f;
+            d_c[i] = .5f;
+        }
     } else if (!strcmp(argv[optind], "malloc+register")) {
         d_a = (real *)malloc(sizeof(real)*N);
         d_b = (real *)malloc(sizeof(real)*N);
