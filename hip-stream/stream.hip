@@ -93,16 +93,17 @@ void print_help()
     );
 }
 
-void parse_options(int argc, char** argv, bool& SI, int& N, int& blockSize)
+void parse_options(int argc, char** argv, bool& SI, int& N, int& blockSize, bool& cpuinit)
 {
     // Default values
     SI = false;
     N = 1<<26;
     blockSize = 192;
+    cpuinit = false;
 
     int c;
 
-    while ((c = getopt (argc, argv, "sn:b:h")) != -1)
+    while ((c = getopt (argc, argv, "sn:b:hc")) != -1)
         switch (c)
         {
             case 's':
@@ -113,6 +114,9 @@ void parse_options(int argc, char** argv, bool& SI, int& N, int& blockSize)
                 break;
             case 'b':
                 blockSize = std::atoi(optarg);
+                break;
+            case 'c':
+                cpuinit = true;
                 break;
             case 'h':
                 print_help();
@@ -188,7 +192,8 @@ int main(int argc, char** argv)
     // Parse arguments
     bool SI;
     int N, blockSize;
-    parse_options(argc, argv, SI, N, blockSize);
+    bool cpuinit;
+    parse_options(argc, argv, SI, N, blockSize, cpuinit);
 
     if (optind+1 != argc) {
         printf("select alloc method\n");
@@ -250,6 +255,13 @@ int main(int argc, char** argv)
         printf(" output in SI units (KB = 1000 B)\n");
     else
         printf(" output in IEC units (KiB = 1024 B)\n");
+
+    if (cpuinit) {
+        printf(" init on cpu\n");
+        memset(d_a, 0, sizeof(real)*N);
+        memset(d_b, 0, sizeof(real)*N);
+        memset(d_c, 0, sizeof(real)*N);
+    }
 
     /* Initialize memory on the device */
     set_array<real><<<dimGrid, dimBlock, 0, 0>>>(d_a, 2.f, N);
