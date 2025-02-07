@@ -1,0 +1,167 @@
+"Correlation_Id","Dispatch_Id","Agent_Id","Queue_Id","Process_Id","Thread_Id","Grid_Size","Kernel_Name","Workgroup_Size","LDS_Block_Size","Scratch_Size","VGPR_Count","SGPR_Count","Counter_Name","Counter_Value"
+1,1,4,1,133639,133639,67108992,"void set_array<double>(double*, double, int)",192,0,0,8,16,"TCP_UTCL1_TRANSLATION_HIT_sum",9266065
+1,1,4,1,133639,133639,67108992,"void set_array<double>(double*, double, int)",192,0,0,8,16,"TCP_UTCL1_TRANSLATION_MISS_sum",401364
+2,2,4,1,133639,133639,67108992,"void set_array<double>(double*, double, int)",192,0,0,8,16,"TCP_UTCL1_TRANSLATION_HIT_sum",9327024
+2,2,4,1,133639,133639,67108992,"void set_array<double>(double*, double, int)",192,0,0,8,16,"TCP_UTCL1_TRANSLATION_MISS_sum",396295
+3,3,4,1,133639,133639,67108992,"void set_array<double>(double*, double, int)",192,0,0,8,16,"TCP_UTCL1_TRANSLATION_HIT_sum",10879260
+3,3,4,1,133639,133639,67108992,"void set_array<double>(double*, double, int)",192,0,0,8,16,"TCP_UTCL1_TRANSLATION_MISS_sum",295623
+4,4,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17026813
+4,4,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",711011
+5,5,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17402796
+5,5,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",707748
+6,6,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32021120
+6,6,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1071163
+7,7,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32385659
+7,7,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1072724
+8,8,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17501620
+8,8,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",711084
+9,9,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17487883
+9,9,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",708099
+10,10,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32025508
+10,10,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1072081
+11,11,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32362683
+11,11,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1074129
+12,12,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17507192
+12,12,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",711360
+13,13,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17491674
+13,13,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",708103
+14,14,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32049936
+14,14,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1071225
+15,15,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32384436
+15,15,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1071984
+16,16,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17427652
+16,16,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",711209
+17,17,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17397597
+17,17,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",707350
+18,18,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32041595
+18,18,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1071486
+19,19,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32355679
+19,19,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1072242
+20,20,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17355016
+20,20,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",711094
+21,21,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17408248
+21,21,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",707394
+22,22,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32052045
+22,22,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1071060
+23,23,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32389847
+23,23,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1072033
+24,24,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17337770
+24,24,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",710432
+25,25,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17351252
+25,25,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",706882
+26,26,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32027444
+26,26,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1070759
+27,27,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32410519
+27,27,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1071504
+28,28,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17364358
+28,28,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",710708
+29,29,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17405517
+29,29,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",707114
+30,30,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32047930
+30,30,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1069518
+31,31,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32384704
+31,31,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1072397
+32,32,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17367417
+32,32,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",710806
+33,33,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17379499
+33,33,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",707142
+34,34,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32039077
+34,34,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1070039
+35,35,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32379221
+35,35,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1072401
+36,36,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17399964
+36,36,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",710869
+37,37,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17380142
+37,37,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",707145
+38,38,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32033911
+38,38,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1070948
+39,39,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32386954
+39,39,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1071364
+40,40,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17351918
+40,40,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",710644
+41,41,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17357129
+41,41,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",707519
+42,42,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32071420
+42,42,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1068985
+43,43,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32406531
+43,43,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1071132
+44,44,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17368061
+44,44,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",710507
+45,45,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17399426
+45,45,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",707835
+46,46,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32050116
+46,46,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1068951
+47,47,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32390070
+47,47,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1071786
+48,48,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17360304
+48,48,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",710974
+49,49,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17384595
+49,49,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",707104
+50,50,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32020526
+50,50,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1070210
+51,51,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32398359
+51,51,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1072593
+52,52,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17317440
+52,52,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",711399
+53,53,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17375740
+53,53,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",707399
+54,54,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32047094
+54,54,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1070204
+55,55,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32362384
+55,55,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1072789
+56,56,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17348399
+56,56,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",710914
+57,57,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17338071
+57,57,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",706586
+58,58,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32064298
+58,58,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1068956
+59,59,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32379409
+59,59,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1071704
+60,60,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17362460
+60,60,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",711097
+61,61,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17391399
+61,61,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",707185
+62,62,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32060022
+62,62,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1069421
+63,63,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32387264
+63,63,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1070817
+64,64,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17339006
+64,64,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",711028
+65,65,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17408221
+65,65,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",707053
+66,66,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32037240
+66,66,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1070593
+67,67,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32398087
+67,67,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1071200
+68,68,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17344556
+68,68,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",710535
+69,69,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17377023
+69,69,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",707246
+70,70,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32062246
+70,70,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1068996
+71,71,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32410568
+71,71,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1071842
+72,72,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17385615
+72,72,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",711402
+73,73,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17393450
+73,73,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",707459
+74,74,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32035601
+74,74,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1069846
+75,75,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32396528
+75,75,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1070944
+76,76,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17345095
+76,76,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",711021
+77,77,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17332582
+77,77,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",707601
+78,78,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32050872
+78,78,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1069447
+79,79,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32387618
+79,79,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1071628
+80,80,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17351436
+80,80,4,1,133639,133639,67108992,"void STREAM_Copy<double>(double*, double*, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",710838
+81,81,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_HIT_sum",17373877
+81,81,4,1,133639,133639,67108992,"void STREAM_Scale<double>(double*, double*, double, int)",192,0,0,4,16,"TCP_UTCL1_TRANSLATION_MISS_sum",707518
+82,82,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32057729
+82,82,4,1,133639,133639,67108992,"void STREAM_Add<double>(double*, double*, double*, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1069461
+83,83,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_HIT_sum",32385119
+83,83,4,1,133639,133639,67108992,"void STREAM_Triad<double>(double*, double*, double*, double, int)",192,0,0,12,16,"TCP_UTCL1_TRANSLATION_MISS_sum",1072046

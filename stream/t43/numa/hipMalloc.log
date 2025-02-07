@@ -1,0 +1,432 @@
+-------------------------------------------------------------
+STREAM version $Revision: 5.10 $
+-------------------------------------------------------------
+This system uses 8 bytes per array element.
+-------------------------------------------------------------
+Array size = 80000000 (elements), Offset = 0 (elements)
+Memory per array = 610.4 MiB (= 0.6 GiB).
+Total memory required = 1831.1 MiB (= 1.8 GiB).
+Each kernel will be executed 10 times.
+ The *best* time for each kernel (excluding the first iteration)
+ will be used to compute the reported bandwidth.
+-------------------------------------------------------------
+Number of Threads requested = 1
+Number of Threads counted = 1
+-------------------------------------------------------------
+Your clock granularity/precision appears to be 1 microseconds.
+Each test below will take on the order of 18692 microseconds.
+   (= 18692 clock ticks)
+Increase the size of the arrays if this shows that
+you are not getting at least 20 clock ticks per test.
+-------------------------------------------------------------
+WARNING -- The above is only a rough guideline.
+For best results, please be sure you know the
+precision of your system timer.
+-------------------------------------------------------------
+Function    Best Rate MB/s  Avg time     Min time     Max time
+Copy:           36810.1     0.034867     0.034773     0.034957
+Scale:          36878.1     0.034772     0.034709     0.034848
+Add:            39022.1     0.049299     0.049203     0.049355
+Triad:          37761.9     0.050981     0.050845     0.051076
+-------------------------------------------------------------
+Solution Validates: avg error less than 1.000000e-13 on all three arrays
+-------------------------------------------------------------
+
+ Performance counter stats for './mstream hipMalloc':
+
+                 0      major-faults                                                
+             4,280      minor-faults                                                
+        18,160,977      ls_l1_d_tlb_miss.all                                        
+        17,328,837      dTLB-load-misses                                            
+            83,593      iTLB-load-misses                                            
+
+       2.575057304 seconds time elapsed
+
+       1.903846000 seconds user
+       0.617160000 seconds sys
+
+
+-------------------------------------------------------------
+STREAM version $Revision: 5.10 $
+-------------------------------------------------------------
+This system uses 8 bytes per array element.
+-------------------------------------------------------------
+Array size = 80000000 (elements), Offset = 0 (elements)
+Memory per array = 610.4 MiB (= 0.6 GiB).
+Total memory required = 1831.1 MiB (= 1.8 GiB).
+Each kernel will be executed 10 times.
+ The *best* time for each kernel (excluding the first iteration)
+ will be used to compute the reported bandwidth.
+-------------------------------------------------------------
+Number of Threads requested = 3
+Number of Threads counted = 3
+-------------------------------------------------------------
+Your clock granularity/precision appears to be 1 microseconds.
+Each test below will take on the order of 7881 microseconds.
+   (= 7881 clock ticks)
+Increase the size of the arrays if this shows that
+you are not getting at least 20 clock ticks per test.
+-------------------------------------------------------------
+WARNING -- The above is only a rough guideline.
+For best results, please be sure you know the
+precision of your system timer.
+-------------------------------------------------------------
+Function    Best Rate MB/s  Avg time     Min time     Max time
+Copy:          104258.9     0.012322     0.012277     0.012369
+Scale:         104431.3     0.012324     0.012257     0.012381
+Add:           110917.6     0.017362     0.017310     0.017409
+Triad:         107197.0     0.017936     0.017911     0.017961
+-------------------------------------------------------------
+Solution Validates: avg error less than 1.000000e-13 on all three arrays
+-------------------------------------------------------------
+
+ Performance counter stats for './mstream hipMalloc':
+
+               151      major-faults                                                
+             4,159      minor-faults                                                
+        18,181,363      ls_l1_d_tlb_miss.all                                        
+        17,323,499      dTLB-load-misses                                            
+           175,875      iTLB-load-misses                                            
+
+       1.234893804 seconds time elapsed
+
+       2.222396000 seconds user
+       0.893908000 seconds sys
+
+
+-------------------------------------------------------------
+STREAM version $Revision: 5.10 $
+-------------------------------------------------------------
+This system uses 8 bytes per array element.
+-------------------------------------------------------------
+Array size = 80000000 (elements), Offset = 0 (elements)
+Memory per array = 610.4 MiB (= 0.6 GiB).
+Total memory required = 1831.1 MiB (= 1.8 GiB).
+Each kernel will be executed 10 times.
+ The *best* time for each kernel (excluding the first iteration)
+ will be used to compute the reported bandwidth.
+-------------------------------------------------------------
+Number of Threads requested = 6
+Number of Threads counted = 6
+-------------------------------------------------------------
+Your clock granularity/precision appears to be 1 microseconds.
+Each test below will take on the order of 4752 microseconds.
+   (= 4752 clock ticks)
+Increase the size of the arrays if this shows that
+you are not getting at least 20 clock ticks per test.
+-------------------------------------------------------------
+WARNING -- The above is only a rough guideline.
+For best results, please be sure you know the
+precision of your system timer.
+-------------------------------------------------------------
+Function    Best Rate MB/s  Avg time     Min time     Max time
+Copy:          176963.2     0.007242     0.007233     0.007264
+Scale:         176208.1     0.007280     0.007264     0.007298
+Add:           190132.5     0.010114     0.010098     0.010136
+Triad:         188477.2     0.010214     0.010187     0.010232
+-------------------------------------------------------------
+Solution Validates: avg error less than 1.000000e-13 on all three arrays
+-------------------------------------------------------------
+
+ Performance counter stats for './mstream hipMalloc':
+
+               484      major-faults                                                
+             3,871      minor-faults                                                
+        18,218,532      ls_l1_d_tlb_miss.all                                        
+        17,333,173      dTLB-load-misses                                            
+           299,245      iTLB-load-misses                                            
+
+       0.981211222 seconds time elapsed
+
+       2.879040000 seconds user
+       1.476477000 seconds sys
+
+
+-------------------------------------------------------------
+STREAM version $Revision: 5.10 $
+-------------------------------------------------------------
+This system uses 8 bytes per array element.
+-------------------------------------------------------------
+Array size = 80000000 (elements), Offset = 0 (elements)
+Memory per array = 610.4 MiB (= 0.6 GiB).
+Total memory required = 1831.1 MiB (= 1.8 GiB).
+Each kernel will be executed 10 times.
+ The *best* time for each kernel (excluding the first iteration)
+ will be used to compute the reported bandwidth.
+-------------------------------------------------------------
+Number of Threads requested = 9
+Number of Threads counted = 9
+-------------------------------------------------------------
+Your clock granularity/precision appears to be 1 microseconds.
+Each test below will take on the order of 4281 microseconds.
+   (= 4281 clock ticks)
+Increase the size of the arrays if this shows that
+you are not getting at least 20 clock ticks per test.
+-------------------------------------------------------------
+WARNING -- The above is only a rough guideline.
+For best results, please be sure you know the
+precision of your system timer.
+-------------------------------------------------------------
+Function    Best Rate MB/s  Avg time     Min time     Max time
+Copy:          197713.4     0.006489     0.006474     0.006496
+Scale:         196677.6     0.006521     0.006508     0.006534
+Add:           206055.6     0.009331     0.009318     0.009346
+Triad:         206785.7     0.009295     0.009285     0.009304
+-------------------------------------------------------------
+Solution Validates: avg error less than 1.000000e-13 on all three arrays
+-------------------------------------------------------------
+
+ Performance counter stats for './mstream hipMalloc':
+
+               750      major-faults                                                
+             3,650      minor-faults                                                
+        18,261,461      ls_l1_d_tlb_miss.all                                        
+        17,362,774      dTLB-load-misses                                            
+           429,840      iTLB-load-misses                                            
+
+       0.953802462 seconds time elapsed
+
+       4.009818000 seconds user
+       2.109767000 seconds sys
+
+
+-------------------------------------------------------------
+STREAM version $Revision: 5.10 $
+-------------------------------------------------------------
+This system uses 8 bytes per array element.
+-------------------------------------------------------------
+Array size = 80000000 (elements), Offset = 0 (elements)
+Memory per array = 610.4 MiB (= 0.6 GiB).
+Total memory required = 1831.1 MiB (= 1.8 GiB).
+Each kernel will be executed 10 times.
+ The *best* time for each kernel (excluding the first iteration)
+ will be used to compute the reported bandwidth.
+-------------------------------------------------------------
+Number of Threads requested = 12
+Number of Threads counted = 12
+-------------------------------------------------------------
+Your clock granularity/precision appears to be 1 microseconds.
+Each test below will take on the order of 4126 microseconds.
+   (= 4126 clock ticks)
+Increase the size of the arrays if this shows that
+you are not getting at least 20 clock ticks per test.
+-------------------------------------------------------------
+WARNING -- The above is only a rough guideline.
+For best results, please be sure you know the
+precision of your system timer.
+-------------------------------------------------------------
+Function    Best Rate MB/s  Avg time     Min time     Max time
+Copy:          198789.5     0.006454     0.006439     0.006463
+Scale:         197924.8     0.006484     0.006467     0.006500
+Add:           207542.5     0.009267     0.009251     0.009279
+Triad:         207590.6     0.009268     0.009249     0.009315
+-------------------------------------------------------------
+Solution Validates: avg error less than 1.000000e-13 on all three arrays
+-------------------------------------------------------------
+
+ Performance counter stats for './mstream hipMalloc':
+
+               565      major-faults                                                
+             3,897      minor-faults                                                
+        18,302,299      ls_l1_d_tlb_miss.all                                        
+        17,389,489      dTLB-load-misses                                            
+           544,276      iTLB-load-misses                                            
+
+       0.950968711 seconds time elapsed
+
+       5.279245000 seconds user
+       2.822324000 seconds sys
+
+
+-------------------------------------------------------------
+STREAM version $Revision: 5.10 $
+-------------------------------------------------------------
+This system uses 8 bytes per array element.
+-------------------------------------------------------------
+Array size = 80000000 (elements), Offset = 0 (elements)
+Memory per array = 610.4 MiB (= 0.6 GiB).
+Total memory required = 1831.1 MiB (= 1.8 GiB).
+Each kernel will be executed 10 times.
+ The *best* time for each kernel (excluding the first iteration)
+ will be used to compute the reported bandwidth.
+-------------------------------------------------------------
+Number of Threads requested = 15
+Number of Threads counted = 15
+-------------------------------------------------------------
+Your clock granularity/precision appears to be 1 microseconds.
+Each test below will take on the order of 4068 microseconds.
+   (= 4068 clock ticks)
+Increase the size of the arrays if this shows that
+you are not getting at least 20 clock ticks per test.
+-------------------------------------------------------------
+WARNING -- The above is only a rough guideline.
+For best results, please be sure you know the
+precision of your system timer.
+-------------------------------------------------------------
+Function    Best Rate MB/s  Avg time     Min time     Max time
+Copy:          197219.5     0.006503     0.006490     0.006526
+Scale:         197713.4     0.006507     0.006474     0.006530
+Add:           204584.6     0.009410     0.009385     0.009435
+Triad:         203797.6     0.009430     0.009421     0.009441
+-------------------------------------------------------------
+Solution Validates: avg error less than 1.000000e-13 on all three arrays
+-------------------------------------------------------------
+
+ Performance counter stats for './mstream hipMalloc':
+
+               694      major-faults                                                
+             3,823      minor-faults                                                
+        18,392,522      ls_l1_d_tlb_miss.all                                        
+        17,403,500      dTLB-load-misses                                            
+           722,091      iTLB-load-misses                                            
+
+       0.961286889 seconds time elapsed
+
+       6.660814000 seconds user
+       3.512420000 seconds sys
+
+
+-------------------------------------------------------------
+STREAM version $Revision: 5.10 $
+-------------------------------------------------------------
+This system uses 8 bytes per array element.
+-------------------------------------------------------------
+Array size = 80000000 (elements), Offset = 0 (elements)
+Memory per array = 610.4 MiB (= 0.6 GiB).
+Total memory required = 1831.1 MiB (= 1.8 GiB).
+Each kernel will be executed 10 times.
+ The *best* time for each kernel (excluding the first iteration)
+ will be used to compute the reported bandwidth.
+-------------------------------------------------------------
+Number of Threads requested = 18
+Number of Threads counted = 18
+-------------------------------------------------------------
+Your clock granularity/precision appears to be 1 microseconds.
+Each test below will take on the order of 4080 microseconds.
+   (= 4080 clock ticks)
+Increase the size of the arrays if this shows that
+you are not getting at least 20 clock ticks per test.
+-------------------------------------------------------------
+WARNING -- The above is only a rough guideline.
+For best results, please be sure you know the
+precision of your system timer.
+-------------------------------------------------------------
+Function    Best Rate MB/s  Avg time     Min time     Max time
+Copy:          198546.9     0.006463     0.006447     0.006475
+Scale:         198326.9     0.006480     0.006454     0.006489
+Add:           206187.5     0.009327     0.009312     0.009344
+Triad:         206472.9     0.009313     0.009299     0.009326
+-------------------------------------------------------------
+Solution Validates: avg error less than 1.000000e-13 on all three arrays
+-------------------------------------------------------------
+
+ Performance counter stats for './mstream hipMalloc':
+
+               695      major-faults                                                
+             3,840      minor-faults                                                
+        18,504,981      ls_l1_d_tlb_miss.all                                        
+        17,450,510      dTLB-load-misses                                            
+           831,383      iTLB-load-misses                                            
+
+       0.951814127 seconds time elapsed
+
+       7.858364000 seconds user
+       4.071143000 seconds sys
+
+
+-------------------------------------------------------------
+STREAM version $Revision: 5.10 $
+-------------------------------------------------------------
+This system uses 8 bytes per array element.
+-------------------------------------------------------------
+Array size = 80000000 (elements), Offset = 0 (elements)
+Memory per array = 610.4 MiB (= 0.6 GiB).
+Total memory required = 1831.1 MiB (= 1.8 GiB).
+Each kernel will be executed 10 times.
+ The *best* time for each kernel (excluding the first iteration)
+ will be used to compute the reported bandwidth.
+-------------------------------------------------------------
+Number of Threads requested = 21
+Number of Threads counted = 21
+-------------------------------------------------------------
+Your clock granularity/precision appears to be 1 microseconds.
+Each test below will take on the order of 4044 microseconds.
+   (= 4044 clock ticks)
+Increase the size of the arrays if this shows that
+you are not getting at least 20 clock ticks per test.
+-------------------------------------------------------------
+WARNING -- The above is only a rough guideline.
+For best results, please be sure you know the
+precision of your system timer.
+-------------------------------------------------------------
+Function    Best Rate MB/s  Avg time     Min time     Max time
+Copy:          198752.7     0.006446     0.006440     0.006453
+Scale:         198789.5     0.006467     0.006439     0.006490
+Add:           207142.1     0.009280     0.009269     0.009289
+Triad:         207435.6     0.009268     0.009256     0.009283
+-------------------------------------------------------------
+Solution Validates: avg error less than 1.000000e-13 on all three arrays
+-------------------------------------------------------------
+
+ Performance counter stats for './mstream hipMalloc':
+
+               641      major-faults                                                
+             3,967      minor-faults                                                
+        18,664,192      ls_l1_d_tlb_miss.all                                        
+        17,557,264      dTLB-load-misses                                            
+           955,167      iTLB-load-misses                                            
+
+       0.950135754 seconds time elapsed
+
+       9.145949000 seconds user
+       4.668894000 seconds sys
+
+
+-------------------------------------------------------------
+STREAM version $Revision: 5.10 $
+-------------------------------------------------------------
+This system uses 8 bytes per array element.
+-------------------------------------------------------------
+Array size = 80000000 (elements), Offset = 0 (elements)
+Memory per array = 610.4 MiB (= 0.6 GiB).
+Total memory required = 1831.1 MiB (= 1.8 GiB).
+Each kernel will be executed 10 times.
+ The *best* time for each kernel (excluding the first iteration)
+ will be used to compute the reported bandwidth.
+-------------------------------------------------------------
+Number of Threads requested = 24
+Number of Threads counted = 24
+-------------------------------------------------------------
+Your clock granularity/precision appears to be 1 microseconds.
+Each test below will take on the order of 4057 microseconds.
+   (= 4057 clock ticks)
+Increase the size of the arrays if this shows that
+you are not getting at least 20 clock ticks per test.
+-------------------------------------------------------------
+WARNING -- The above is only a rough guideline.
+For best results, please be sure you know the
+precision of your system timer.
+-------------------------------------------------------------
+Function    Best Rate MB/s  Avg time     Min time     Max time
+Copy:          200310.0     0.006405     0.006390     0.006414
+Scale:         199439.4     0.006429     0.006418     0.006440
+Add:           208062.6     0.009237     0.009228     0.009242
+Triad:         208358.7     0.009224     0.009215     0.009241
+-------------------------------------------------------------
+Solution Validates: avg error less than 1.000000e-13 on all three arrays
+-------------------------------------------------------------
+
+ Performance counter stats for './mstream hipMalloc':
+
+               669      major-faults                                                
+             3,975      minor-faults                                                
+        18,774,020      ls_l1_d_tlb_miss.all                                        
+        17,603,354      dTLB-load-misses                                            
+         1,099,638      iTLB-load-misses                                            
+
+       0.954726739 seconds time elapsed
+
+      10.616953000 seconds user
+       5.150888000 seconds sys
+
+

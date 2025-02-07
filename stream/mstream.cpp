@@ -217,6 +217,29 @@ static double	bytes[4] = {
     3 * sizeof(STREAM_TYPE) * STREAM_ARRAY_SIZE
     };
 
+const int TPB = 256;
+const int STRIDE = 1024;
+
+__global__ void memset_kernel(char *p, char x, size_t n)
+{
+    size_t id = blockDim.x * blockIdx.x + threadIdx.x;
+
+    size_t m = STRIDE;
+    if (STRIDE*id >= n)
+        m = 0;
+    else if (STRIDE*(id+1)-1 >= n)
+        m = STRIDE*(id+1)-n;
+
+    for (size_t i = 0; i < m; i++)
+        p[STRIDE*id + i] = x;
+}
+
+void gpu_memset(void *p, char x, size_t n)
+{
+    memset_kernel<<<(n+TPB-1)/TPB, TPB>>>((char *)p, x, n);
+    CHECK_HIP(hipDeviceSynchronize());
+}
+
 extern double mysecond();
 extern void checkSTREAMresults();
 #ifdef TUNED
@@ -242,6 +265,16 @@ main(int argc, char **argv)
 	    printf("select alloc method\n");
 	    return 1;
     }
+
+    char * env;
+    env = getenv("PERF_CTL_FD");
+    int perf_ctl_fd = 0;
+    if (env)
+	perf_ctl_fd = atoi(env);
+    env = getenv("PERF_ACK_FD");
+    int perf_ack_fd = 0;
+    if (env)
+	perf_ack_fd = atoi(env);
 
     size_t s = sizeof(STREAM_TYPE) * (STREAM_ARRAY_SIZE+OFFSET);
     if (!strcmp(argv[1], "malloc")) {
@@ -277,6 +310,13 @@ main(int argc, char **argv)
     /* CHECK_ERRNO(madvise(a, s, MADV_COLLAPSE)); */
     /* CHECK_ERRNO(madvise(b, s, MADV_COLLAPSE)); */
     /* CHECK_ERRNO(madvise(c, s, MADV_COLLAPSE)); */
+
+#ifdef GPUINIT
+    printf("GPUINIT enabled.\n");
+    gpu_memset(a, 0, s);
+    gpu_memset(b, 0, s);
+    gpu_memset(c, 0, s);
+#endif
 
     /* --- SETUP --- determine precision and check timing --- */
 
@@ -365,6 +405,15 @@ main(int argc, char **argv)
     printf("precision of your system timer.\n");
     printf(HLINE);
     
+    if (perf_ctl_fd) {
+	CHECK(write(perf_ctl_fd, "enable\n", 8) == 8);
+	if (perf_ack_fd) {
+	    char ack[5];
+	    CHECK(read(perf_ack_fd, ack, 5) == 5);
+	    assert(strcmp(ack, "ack\n") == 0);
+	}
+    }
+
     /*	--- MAIN LOOP --- repeat test cases NTIMES times --- */
 
     scalar = 3.0;
@@ -410,6 +459,15 @@ main(int argc, char **argv)
 #endif
 	times[3][k] = mysecond() - times[3][k];
 	}
+
+    if (perf_ctl_fd) {
+	CHECK(write(perf_ctl_fd, "disable\n", 9) == 9);
+	if (perf_ack_fd) {
+	    char ack[5];
+	    CHECK(read(perf_ack_fd, ack, 5) == 5);
+	    assert(strcmp(ack, "ack\n") == 0);
+	}
+    }
 
     /*	--- SUMMARY --- */
 
