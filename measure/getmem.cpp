@@ -6,6 +6,9 @@
 #include <errno.h>
 #include <numa.h>
 
+#define FAIL(a) do { std::cerr << "FAIL: " << a << " (" << __FILE__ << ":" << __LINE__ << ")" << std::endl; abort(); } while (0)
+#define CHECK(a) do { if (!(a)) FAIL("check " #a); } while (0)
+#define CHECK_ERRNO(a) do { if ((a) != 0) FAIL(strerror(errno) << " in " #a); } while (0)
 #define CHECK_HIP(x)                                     \
 do{                                                      \
     hipError_t err = x;                                  \
@@ -210,6 +213,20 @@ void gpu_write(void *p)
     CHECK_HIP(hipDeviceSynchronize());
 }
 
+void *alloc_mprotect_test()
+{
+    void *p = mmap(NULL, SIZE, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+    if (p == MAP_FAILED)
+        abort();
+
+    cpu_write(p);
+    gpu_write(p);
+
+    CHECK_ERRNO(mprotect(p, SIZE, PROT_READ));
+
+    return p;
+}
+
 struct allocator {
     const char *name;
     void *(*alloc)();
@@ -224,6 +241,7 @@ struct allocator allocs[] = {
     {"hipHostMalloc", &alloc_hipHostMalloc, true},
     {"hipMallocManaged", &alloc_hipMallocManaged, true},
     {"alloca", NULL, true},
+    {"mprotect_test", &alloc_mprotect_test, true},
     {},
 };
 
