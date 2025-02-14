@@ -1,3 +1,4 @@
 stream
 stream.o
+mpi.o
 hipWaste

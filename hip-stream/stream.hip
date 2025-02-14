@@ -72,6 +72,9 @@ do{                                                      \
     }                                                    \
 }while(0)
 
+void wrap_mpi_init();
+void wrap_mpi_alloc(size_t n, void **p);
+
 typedef double real;
 
 static double   avgtime[4] = {0}, maxtime[4] = {0},
@@ -236,6 +239,11 @@ int main(int argc, char** argv)
         CHECK_HIP(hipHostRegister(d_a, sizeof(real)*N, hipHostRegisterDefault));
         CHECK_HIP(hipHostRegister(d_b, sizeof(real)*N, hipHostRegisterDefault));
         CHECK_HIP(hipHostRegister(d_c, sizeof(real)*N, hipHostRegisterDefault));
+    } else if (!strcmp(argv[optind], "MPI")) {
+        wrap_mpi_init();
+        wrap_mpi_alloc(sizeof(real)*N, (void**)&d_a);
+        wrap_mpi_alloc(sizeof(real)*N, (void**)&d_b);
+        wrap_mpi_alloc(sizeof(real)*N, (void**)&d_c);
     } else {
         printf("select alloc method\n");
         return 1;
