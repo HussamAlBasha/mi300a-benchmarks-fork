@@ -223,6 +223,7 @@ struct allocator allocs[] = {
     {"hipMalloc", &alloc_hipMalloc, true},
     {"hipHostMalloc", &alloc_hipHostMalloc, true},
     {"hipMallocManaged", &alloc_hipMallocManaged, true},
+    {"alloca", NULL, true},
     {},
 };
 
@@ -275,7 +276,13 @@ int main(int argc, char **argv)
 
     if (alloc) {
         std::cout << std::endl;
-        void *p = alloc->alloc();
+
+        void *p;
+        if (!strcmp(alloc->name, "alloca"))
+            p = alloca(SIZE);
+        else
+            p = alloc->alloc();
+
         measure();
 
         if (touch_cpu) {

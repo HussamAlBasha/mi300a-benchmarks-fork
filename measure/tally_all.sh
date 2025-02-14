@@ -1,6 +1,6 @@
 tally=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )/tally.py
 
-for alloc in malloc mmap_anon mmap_file hipMalloc hipHostMalloc hipMallocManaged; do
+for alloc in malloc mmap_anon mmap_file hipMalloc hipHostMalloc hipMallocManaged alloca; do
     echo $alloc.cpu
     python3 $tally < $alloc.cpu
     echo
