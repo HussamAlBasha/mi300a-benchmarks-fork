@@ -239,6 +239,13 @@ int main(int argc, char** argv)
         CHECK_HIP(hipHostRegister(d_a, sizeof(real)*N, hipHostRegisterDefault));
         CHECK_HIP(hipHostRegister(d_b, sizeof(real)*N, hipHostRegisterDefault));
         CHECK_HIP(hipHostRegister(d_c, sizeof(real)*N, hipHostRegisterDefault));
+    } else if (!strcmp(argv[optind], "malloc+coarseGrain")) {
+        d_a = (real *)malloc(sizeof(real)*N);
+        d_b = (real *)malloc(sizeof(real)*N);
+        d_c = (real *)malloc(sizeof(real)*N);
+        CHECK_HIP(hipMemAdvise(d_a, sizeof(real)*N, hipMemAdviseSetCoarseGrain, 0));
+        CHECK_HIP(hipMemAdvise(d_b, sizeof(real)*N, hipMemAdviseSetCoarseGrain, 0));
+        CHECK_HIP(hipMemAdvise(d_c, sizeof(real)*N, hipMemAdviseSetCoarseGrain, 0));
     } else if (!strcmp(argv[optind], "MPI")) {
         wrap_mpi_init();
         wrap_mpi_alloc(sizeof(real)*N, (void**)&d_a);
