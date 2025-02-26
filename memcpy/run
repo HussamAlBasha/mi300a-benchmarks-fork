@@ -1,0 +1,2 @@
+#!/bin/sh
+exec numactl -N0 -m0 ./hip_bandwidth -mode shmoo
