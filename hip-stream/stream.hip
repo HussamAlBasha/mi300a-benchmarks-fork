@@ -62,17 +62,7 @@ THE SOFTWARE.
 # define MAX(x,y) ((x)>(y)?(x):(y))
 # endif
 
-#include <iostream>
-
-#define FAIL(a) do { std::cerr << "FAIL: " << a << " (" << __FILE__ << ":" << __LINE__ << ")" << std::endl; abort(); } while (0)
-#define CHECK(a) do { if (!(a)) FAIL("check " #a); } while (0)
-
-#define CHECK_HIP(x)                                     \
-do{                                                      \
-    hipError_t err = x;                                  \
-    if(hipSuccess != err)                                \
-         FAIL("HIP error: " << hipGetErrorString(err));  \
-}while(0)
+#include "../util.h"
 
 typedef double real;
 

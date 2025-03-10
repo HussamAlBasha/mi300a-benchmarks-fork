@@ -1,16 +1,7 @@
 #include "hip/hip_runtime.h"
 #include <iostream>
 #include <unistd.h>
-
-#define CHECK_HIP(x)                                     \
-do{                                                      \
-    hipError_t err = x;                                  \
-    if(hipSuccess != err){                               \
-        printf("HIP Error (%s:%d): %s\n",          	 \
-         __FILE__, __LINE__, hipGetErrorString(err));    \
-        abort();                                         \
-    }                                                    \
-}while(0)
+#include "../util.h"
 
 template<typename T> __global__ void atomic_sum(T *x)
 {

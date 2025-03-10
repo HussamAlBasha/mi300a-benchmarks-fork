@@ -5,19 +5,7 @@
 #include <sys/mman.h>
 #include <errno.h>
 #include <numa.h>
-
-#define FAIL(a) do { std::cerr << "FAIL: " << a << " (" << __FILE__ << ":" << __LINE__ << ")" << std::endl; abort(); } while (0)
-#define CHECK(a) do { if (!(a)) FAIL("check " #a); } while (0)
-#define CHECK_ERRNO(a) do { if ((a) != 0) FAIL(strerror(errno) << " in " #a); } while (0)
-#define CHECK_HIP(x)                                     \
-do{                                                      \
-    hipError_t err = x;                                  \
-    if(hipSuccess != err){                               \
-        printf("HIP Error (%s:%d): %s\n",          	 \
-         __FILE__, __LINE__, hipGetErrorString(err));    \
-        abort();                                         \
-    }                                                    \
-}while(0)
+#include "../util.h"
 
 const size_t SIZE = 10*1024*1024;
 //const size_t SIZE = 1*1024*1024*1024;
