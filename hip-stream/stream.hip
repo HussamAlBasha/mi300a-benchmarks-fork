@@ -62,24 +62,50 @@ THE SOFTWARE.
 # define MAX(x,y) ((x)>(y)?(x):(y))
 # endif
 
+#include <iostream>
+
+#define FAIL(a) do { std::cerr << "FAIL: " << a << " (" << __FILE__ << ":" << __LINE__ << ")" << std::endl; abort(); } while (0)
+#define CHECK(a) do { if (!(a)) FAIL("check " #a); } while (0)
+
 #define CHECK_HIP(x)                                     \
 do{                                                      \
     hipError_t err = x;                                  \
-    if(hipSuccess != err){                               \
-        printf("HIP Error (%s:%d): %s\n",          	 \
-         __FILE__, __LINE__, hipGetErrorString(err));    \
-        abort();                                         \
-    }                                                    \
+    if(hipSuccess != err)                                \
+         FAIL("HIP error: " << hipGetErrorString(err));  \
 }while(0)
-
-void wrap_mpi_init();
-void wrap_mpi_alloc(size_t n, void **p);
 
 typedef double real;
 
 static double   avgtime[4] = {0}, maxtime[4] = {0},
         mintime[4] = {FLT_MAX,FLT_MAX,FLT_MAX,FLT_MAX};
 
+#ifdef DEVICE_ARRAY
+#define STATIC_ARRAY "__device__"
+#define array_qualifier __device__
+#endif
+
+#ifdef CONSTANT_ARRAY
+#define STATIC_ARRAY "__constant__"
+#define array_qualifier __constant__
+#endif
+
+#ifdef MANAGED_ARRAY
+#define STATIC_ARRAY "__managed__"
+#define array_qualifier __managed__
+#endif
+
+#ifdef STATIC_ARRAY
+const size_t STATIC_SIZE = 1<<26;
+
+array_qualifier real d_a[STATIC_SIZE];
+array_qualifier real d_b[STATIC_SIZE];
+array_qualifier real d_c[STATIC_SIZE];
+#endif
+
+#ifndef STATIC_ARRAY
+void wrap_mpi_init();
+void wrap_mpi_alloc(size_t n, void **p);
+#endif
 
 void print_help()
 {
@@ -96,7 +122,7 @@ void print_help()
     );
 }
 
-void parse_options(int argc, char** argv, bool& SI, int& N, int& blockSize, bool& cpuinit)
+void parse_options(int argc, char** argv, bool& SI, int& N, int& blockSize, bool& cpuinit, bool& validate)
 {
     // Default values
     SI = false;
@@ -106,7 +132,7 @@ void parse_options(int argc, char** argv, bool& SI, int& N, int& blockSize, bool
 
     int c;
 
-    while ((c = getopt (argc, argv, "sn:b:hc")) != -1)
+    while ((c = getopt (argc, argv, "sn:b:hcv")) != -1)
         switch (c)
         {
             case 's':
@@ -120,6 +146,9 @@ void parse_options(int argc, char** argv, bool& SI, int& N, int& blockSize, bool
                 break;
             case 'c':
                 cpuinit = true;
+                break;
+            case 'v':
+                validate = true;
                 break;
             case 'h':
                 print_help();
@@ -144,6 +173,59 @@ double mysecond()
 }
 
 
+#ifdef STATIC_ARRAY
+__global__ void set_array_a(real value, int len)
+{
+    int idx = threadIdx.x + blockIdx.x * blockDim.x;
+    if (idx < len) {
+        d_a[idx] = value;
+    }
+}
+__global__ void set_array_b(real value, int len)
+{
+    int idx = threadIdx.x + blockIdx.x * blockDim.x;
+    if (idx < len) {
+        d_b[idx] = value;
+    }
+}
+__global__ void set_array_c(real value, int len)
+{
+    int idx = threadIdx.x + blockIdx.x * blockDim.x;
+    if (idx < len) {
+        d_c[idx] = value;
+    }
+}
+
+__global__ void STREAM_Copy(int len)
+{
+    int idx = threadIdx.x + blockIdx.x * blockDim.x;
+    if (idx < len)
+        d_c[idx] = d_a[idx];
+}
+
+__global__ void STREAM_Scale(real scale, int len)
+{
+    int idx = threadIdx.x + blockIdx.x * blockDim.x;
+    if (idx < len)
+        d_b[idx] = scale* d_c[idx];
+}
+
+__global__ void STREAM_Add(int len)
+{
+    int idx = threadIdx.x + blockIdx.x * blockDim.x;
+    if (idx < len)
+        d_c[idx] = d_a[idx]+d_b[idx];
+}
+
+__global__ void STREAM_Triad(real scalar, int len)
+{
+    int idx = threadIdx.x + blockIdx.x * blockDim.x;
+    if (idx < len)
+        d_a[idx] = d_b[idx]+scalar*d_c[idx];
+}
+
+#else
+
 template <typename T>
 __global__ void set_array(T *a,  T value, int len)
 {
@@ -153,19 +235,19 @@ __global__ void set_array(T *a,  T value, int len)
 }
 
 template <typename T>
-__global__ void STREAM_Copy(T *a, T *b, int len)
+__global__ void STREAM_Copy(T *a, T *c, int len)
 {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
     if (idx < len)
-        b[idx] = a[idx];
+        c[idx] = a[idx];
 }
 
 template <typename T>
-__global__ void STREAM_Scale(T *a, T *b, T scale,  int len)
+__global__ void STREAM_Scale(T *b, T *c, T scale,  int len)
 {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
     if (idx < len)
-        b[idx] = scale* a[idx];
+        b[idx] = scale* c[idx];
 }
 
 template <typename T>
@@ -181,12 +263,144 @@ __global__ void STREAM_Triad(T *a, T *b, T *c, T scalar, int len)
 {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
     if (idx < len)
-        c[idx] = a[idx]+scalar*b[idx];
+        a[idx] = b[idx]+scalar*c[idx];
+}
+#endif
+
+#ifndef abs
+#define abs(a) ((a) >= 0 ? (a) : -(a))
+#endif
+
+#ifdef MANAGED_ARRAY
+void checkSTREAMresults (size_t N)
+#else
+void checkSTREAMresults (size_t N, real *d_a, real *d_b, real *d_c)
+#endif
+{
+	real aj,bj,cj,scalar;
+	real aSumErr,bSumErr,cSumErr;
+	real aAvgErr,bAvgErr,cAvgErr;
+	double epsilon;
+	ssize_t	j;
+	int	k,ierr,err;
+
+    /* reproduce initialization */
+	aj = 1.0;
+	bj = 2.0;
+	cj = 0.0;
+	//aj = 2.0;
+	//bj = 0.5;
+	//cj = 0.5;
+    /* a[] is modified during timing check */
+	//aj = 2.0E0 * aj;
+    /* now execute timing loop */
+	scalar = 3.0;
+	for (k=0; k<NTIMES; k++)
+        {
+            cj = aj;
+            bj = scalar*cj;
+            cj = aj+bj;
+            aj = bj+scalar*cj;
+        }
+
+    /* accumulate deltas between observed and expected results */
+	aSumErr = 0.0;
+	bSumErr = 0.0;
+	cSumErr = 0.0;
+	for (j=0; j<N; j++) {
+		aSumErr += abs(d_a[j] - aj);
+		bSumErr += abs(d_b[j] - bj);
+		cSumErr += abs(d_c[j] - cj);
+		// if (j == 417) printf("Index 417: c[j]: %f, cj: %f\n",c[j],cj);	// MCCALPIN
+	}
+	aAvgErr = aSumErr / (real) N;
+	bAvgErr = bSumErr / (real) N;
+	cAvgErr = cSumErr / (real) N;
+
+	if (sizeof(real) == 4) {
+		epsilon = 1.e-6;
+	}
+	else if (sizeof(real) == 8) {
+		epsilon = 1.e-13;
+	}
+	else {
+		printf("WEIRD: sizeof(real) = %lu\n",sizeof(real));
+		epsilon = 1.e-6;
+	}
+
+	err = 0;
+	if (abs(aAvgErr/aj) > epsilon) {
+		err++;
+		printf ("Failed Validation on array a[], AvgRelAbsErr > epsilon (%e)\n",epsilon);
+		printf ("     Expected Value: %e, AvgAbsErr: %e, AvgRelAbsErr: %e\n",aj,aAvgErr,abs(aAvgErr)/aj);
+		ierr = 0;
+		for (j=0; j<N; j++) {
+			if (abs(d_a[j]/aj-1.0) > epsilon) {
+				ierr++;
+#ifdef VERBOSE
+				if (ierr < 10) {
+					printf("         array a: index: %ld, expected: %e, observed: %e, relative error: %e\n",
+						j,aj,d_a[j],abs((aj-d_a[j])/aAvgErr));
+				}
+#endif
+			}
+		}
+		printf("     For array a[], %d errors were found.\n",ierr);
+	}
+	if (abs(bAvgErr/bj) > epsilon) {
+		err++;
+		printf ("Failed Validation on array b[], AvgRelAbsErr > epsilon (%e)\n",epsilon);
+		printf ("     Expected Value: %e, AvgAbsErr: %e, AvgRelAbsErr: %e\n",bj,bAvgErr,abs(bAvgErr)/bj);
+		printf ("     AvgRelAbsErr > Epsilon (%e)\n",epsilon);
+		ierr = 0;
+		for (j=0; j<N; j++) {
+			if (abs(d_b[j]/bj-1.0) > epsilon) {
+				ierr++;
+#ifdef VERBOSE
+				if (ierr < 10) {
+					printf("         array b: index: %ld, expected: %e, observed: %e, relative error: %e\n",
+						j,bj,d_b[j],abs((bj-d_b[j])/bAvgErr));
+				}
+#endif
+			}
+		}
+		printf("     For array b[], %d errors were found.\n",ierr);
+	}
+	if (abs(cAvgErr/cj) > epsilon) {
+		err++;
+		printf ("Failed Validation on array c[], AvgRelAbsErr > epsilon (%e)\n",epsilon);
+		printf ("     Expected Value: %e, AvgAbsErr: %e, AvgRelAbsErr: %e\n",cj,cAvgErr,abs(cAvgErr)/cj);
+		printf ("     AvgRelAbsErr > Epsilon (%e)\n",epsilon);
+		ierr = 0;
+		for (j=0; j<N; j++) {
+			if (abs(d_c[j]/cj-1.0) > epsilon) {
+				ierr++;
+#ifdef VERBOSE
+				if (ierr < 10) {
+					printf("         array c: index: %ld, expected: %e, observed: %e, relative error: %e\n",
+						j,cj,d_c[j],abs((cj-d_c[j])/cAvgErr));
+				}
+#endif
+			}
+		}
+		printf("     For array c[], %d errors were found.\n",ierr);
+	}
+	if (err == 0) {
+		printf ("Solution Validates: avg error less than %e on all three arrays\n",epsilon);
+	}
+#ifdef VERBOSE
+	printf ("Results Validation Verbose Results: \n");
+	printf ("    Expected a(1), b(1), c(1): %f %f %f \n",aj,bj,cj);
+	printf ("    Observed a(1), b(1), c(1): %f %f %f \n",d_a[1],d_b[1],d_c[1]);
+	printf ("    Rel Errors on a, b, c:     %e %e %e \n",abs(aAvgErr/aj),abs(bAvgErr/bj),abs(cAvgErr/cj));
+#endif
 }
 
 int main(int argc, char** argv)
 {
+#ifndef STATIC_ARRAY
     real *d_a, *d_b, *d_c;
+#endif
     int j,k;
     double times[4][NTIMES];
     real scalar;
@@ -195,9 +409,14 @@ int main(int argc, char** argv)
     // Parse arguments
     bool SI;
     int N, blockSize;
-    bool cpuinit;
-    parse_options(argc, argv, SI, N, blockSize, cpuinit);
+    bool cpuinit, validate;
+    parse_options(argc, argv, SI, N, blockSize, cpuinit, validate);
 
+#ifdef STATIC_ARRAY
+    CHECK(N == STATIC_SIZE);
+
+    printf("STATIC_ARRAY: %s\n", STATIC_ARRAY);
+#else
     if (optind+1 != argc) {
         printf("select alloc method\n");
         return 1;
@@ -255,6 +474,7 @@ int main(int argc, char** argv)
         printf("select alloc method\n");
         return 1;
     }
+#endif
 
     printf(" STREAM Benchmark implementation in HIP\n");
     printf(" Array size (%s precision) =%7.2f MB\n", sizeof(double)==sizeof(real)?"double":"single", double(N)*double(sizeof(real))/1.e6);
@@ -273,15 +493,33 @@ int main(int argc, char** argv)
 
     if (cpuinit) {
         printf(" init on cpu\n");
+
+#if defined(STATIC_ARRAY) && !defined(MANAGED_ARRAY)
+        void *a, *b, *c;
+        CHECK_HIP(hipGetSymbolAddress(&a, HIP_SYMBOL(d_a)));
+        CHECK_HIP(hipGetSymbolAddress(&b, HIP_SYMBOL(d_b)));
+        CHECK_HIP(hipGetSymbolAddress(&c, HIP_SYMBOL(d_c)));
+
+        memset(a, 0, sizeof(real)*N);
+        memset(b, 0, sizeof(real)*N);
+        memset(c, 0, sizeof(real)*N);
+#else
         memset(d_a, 0, sizeof(real)*N);
         memset(d_b, 0, sizeof(real)*N);
         memset(d_c, 0, sizeof(real)*N);
+#endif
     }
 
     /* Initialize memory on the device */
-    set_array<real><<<dimGrid, dimBlock, 0, 0>>>(d_a, 2.f, N);
-    set_array<real><<<dimGrid, dimBlock, 0, 0>>>(d_b, .5f, N);
-    set_array<real><<<dimGrid, dimBlock, 0, 0>>>(d_c, .5f, N);
+#ifdef STATIC_ARRAY
+    set_array_a<<<dimGrid, dimBlock, 0, 0>>>(1.0, N);
+    set_array_b<<<dimGrid, dimBlock, 0, 0>>>(2.0, N);
+    set_array_c<<<dimGrid, dimBlock, 0, 0>>>(0.0, N);
+#else
+    set_array<real><<<dimGrid, dimBlock, 0, 0>>>(d_a, 1.0, N);
+    set_array<real><<<dimGrid, dimBlock, 0, 0>>>(d_b, 2.0, N);
+    set_array<real><<<dimGrid, dimBlock, 0, 0>>>(d_c, 0.0, N);
+#endif
 
     /*  --- MAIN LOOP --- repeat test cases NTIMES times --- */
 
@@ -289,22 +527,38 @@ int main(int argc, char** argv)
     for (k=0; k<NTIMES; k++)
     {
         times[0][k]= mysecond();
+#ifdef STATIC_ARRAY
+        STREAM_Copy<<<dimGrid, dimBlock, 0, 0>>>(N);
+#else
         STREAM_Copy<real><<<dimGrid, dimBlock, 0, 0>>>(d_a, d_c, N);
+#endif
         CHECK_HIP(hipDeviceSynchronize());
         times[0][k]= mysecond() -  times[0][k];
 
         times[1][k]= mysecond();
+#ifdef STATIC_ARRAY
+        STREAM_Scale<<<dimGrid, dimBlock, 0, 0>>>(scalar, N);
+#else
         STREAM_Scale<real><<<dimGrid, dimBlock, 0, 0>>>(d_b, d_c, scalar, N);
+#endif
         CHECK_HIP(hipDeviceSynchronize());
         times[1][k]= mysecond() -  times[1][k];
 
         times[2][k]= mysecond();
+#ifdef STATIC_ARRAY
+        STREAM_Add<<<dimGrid, dimBlock, 0, 0>>>(N);
+#else
         STREAM_Add<real><<<dimGrid, dimBlock, 0, 0>>>(d_a, d_b, d_c, N);
+#endif
         CHECK_HIP(hipDeviceSynchronize());
         times[2][k]= mysecond() -  times[2][k];
 
         times[3][k]= mysecond();
-        STREAM_Triad<real><<<dimGrid, dimBlock, 0, 0>>>(d_b, d_c, d_a, scalar, N);
+#ifdef STATIC_ARRAY
+        STREAM_Triad<<<dimGrid, dimBlock, 0, 0>>>(scalar, N);
+#else
+        STREAM_Triad<real><<<dimGrid, dimBlock, 0, 0>>>(d_a, d_b, d_c, scalar, N);
+#endif
         CHECK_HIP(hipDeviceSynchronize());
         times[3][k]= mysecond() -  times[3][k];
     }
@@ -342,6 +596,27 @@ int main(int argc, char** argv)
                 avgtime[j],
                 mintime[j],
                 maxtime[j]);
+    }
+
+    if (validate) {
+#ifdef STATIC_ARRAY
+#ifdef MANAGED_ARRAY
+        checkSTREAMresults(N);
+#else
+        real *a = (real *)malloc(sizeof(real)*N);
+        real *b = (real *)malloc(sizeof(real)*N);
+        real *c = (real *)malloc(sizeof(real)*N);
+        CHECK_HIP(hipMemcpyToSymbol(HIP_SYMBOL(d_a), a, sizeof(real)*N, hipMemcpyHostToDevice));
+        CHECK_HIP(hipMemcpyToSymbol(HIP_SYMBOL(d_b), b, sizeof(real)*N, hipMemcpyHostToDevice));
+        CHECK_HIP(hipMemcpyToSymbol(HIP_SYMBOL(d_c), c, sizeof(real)*N, hipMemcpyHostToDevice));
+        /* CHECK_HIP(hipMemcpyFromSymbol(a, HIP_SYMBOL(d_a), sizeof(real)*N)); */
+        /* CHECK_HIP(hipMemcpyFromSymbol(b, HIP_SYMBOL(d_b), sizeof(real)*N)); */
+        /* CHECK_HIP(hipMemcpyFromSymbol(c, HIP_SYMBOL(d_c), sizeof(real)*N)); */
+        checkSTREAMresults(N, a, b, c);
+#endif
+#else
+        checkSTREAMresults(N, d_a, d_b, d_c);
+#endif
     }
 
     /* Free memory on device */

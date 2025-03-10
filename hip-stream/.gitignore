@@ -1,4 +1,10 @@
 stream
 stream.o
+stream-device
+stream-device.o
+stream-constant
+stream-constant.o
+stream-managed
+stream-managed.o
 mpi.o
 hipWaste

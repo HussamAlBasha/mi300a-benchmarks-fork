@@ -1,14 +1,18 @@
-EXECUTABLE = ./stream
-all: $(EXECUTABLE)
+EXE = ./stream
+all: $(EXE) $(EXE)-device $(EXE)-constant $(EXE)-managed
 
 .PHONY: test
 
 OBJECTS = stream.o mpi.o
 
 CXXFLAGS = -g -O2 -DNDEBUG -fPIC
-HIPCC_FLAGS = -g -O2 -DNDEBUG
+HIPCC_FLAGS = -g -O2 -DNDEBUG -Wall
 
-LDFLAGS = -I$(ROCM_PATH)/include/ -L$(ROCM_PATH)/lib  -lamdhip64 -lhsa-runtime64
+ifdef VERBOSE
+	HIPCC_FLAGS += -DVERBOSE=1
+endif
+
+$(EXE): LDFLAGS = -I$(ROCM_PATH)/include/ -L$(ROCM_PATH)/lib  -lamdhip64 -lhsa-runtime64
 
 HIP_PLATFORM ?= amd
 
@@ -20,17 +24,26 @@ ifeq ($(HIP_PLATFORM), amd)
    HIPCC_FLAGS += -x hip -munsafe-fp-atomics
 endif
 
-%.o: %.hip
-	hipcc $(HIPCC_FLAGS) -c $^ -o $@
+stream-device:	HIPCC_FLAGS += -DDEVICE_ARRAY
+stream-constant:	HIPCC_FLAGS += -DCONSTANT_ARRAY
+stream-managed:	HIPCC_FLAGS += -DMANAGED_ARRAY
+
+stream.o: HIPCC_FLAGS += -c
+stream.o stream-device stream-constant stream-managed: stream.hip
+	hipcc $(HIPCC_FLAGS) $^ -o $@
 
 %.o: %.cpp
 	mpic++ $(CXXFLAGS) -c $^ -o $@
 
-$(EXECUTABLE): $(OBJECTS)
-	mpic++ $^ $(LDFLAGS) -o $@
+CC = hipcc
+$(EXE): CC = mpic++
+$(EXE): mpi.o
 
-test: $(EXECUTABLE)
-	$(EXECUTABLE)
+$(EXE)%: stream%.o
+#mpic++ $^ $(LDFLAGS) -o $@
+
+test: $(EXE)
+	$(EXE)
 
 clean:
-	rm -rf $(EXECUTABLE) $(OBJECTS) build
+	rm -rf $(EXE) $(OBJECTS) build
