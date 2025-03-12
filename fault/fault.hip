@@ -31,10 +31,18 @@ long clock()
     return 1000000000*ts.tv_sec + ts.tv_nsec;
 }
 
-long test(size_t pages, size_t stride)
+struct spec {
+    size_t pages;
+    size_t stride;
+    bool gpu_register;
+    bool mlock;
+    bool unmap;
+};
+
+long test(spec spec)
 {
     size_t ps = getpagesize();
-    size_t bytes = ps*pages;
+    size_t bytes = ps*spec.pages;
 
     // Use mmap to ensure that each test is independent. Otherwise malloc may
     // allocate a larger chunk of address space which is faulted in batch.
@@ -42,12 +50,14 @@ long test(size_t pages, size_t stride)
     float *a = (float *)mmap(NULL, bytes, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
     CHECK(a != MAP_FAILED);
 
-#ifdef NOFAULT
-    CHECK_HIP(hipHostRegister(a, bytes, hipHostRegisterDefault));
-#endif
+    if (spec.mlock)
+        CHECK(!mlock(a, bytes));
+
+    if (spec.gpu_register)
+        CHECK_HIP(hipHostRegister(a, bytes, hipHostRegisterDefault));
 
     size_t n = bytes / sizeof(float);
-    size_t threads = (n+stride-1) / stride;
+    size_t threads = (n+spec.stride-1) / spec.stride;
     CHECK(threads > 0);
 
     unsigned tpb = 256;
@@ -55,28 +65,56 @@ long test(size_t pages, size_t stride)
 
     long t0 = clock();
 
-    kernel<<<blocks,tpb>>>(a, n, stride);
+    kernel<<<blocks,tpb>>>(a, n, spec.stride);
     CHECK_HIP(hipDeviceSynchronize());
     DoNotOptimize(a);
 
     long t1 = clock();
 
     // If we don't munmap, we will run out of memory eventually
-    CHECK(!munmap(a, bytes));
+    if (spec.unmap)
+        CHECK(!munmap(a, bytes));
 
     return (t1-t0);
 }
 
 int main(int argc, char **argv)
 {
-    CHECK(argc == 3);
-    int pages = atoi(argv[1]);
-    int stride = atoi(argv[2]);
+    spec spec = {
+        .pages = 1,
+        .stride = (size_t)getpagesize(),
+        .gpu_register = false,
+        .mlock = false,
+        .unmap = true,
+    };
+
+    for (int opt; (opt = getopt(argc, argv, "n:s:rlu")) != -1;) {
+        switch (opt) {
+            case 'n':
+                spec.pages = atoi(optarg);
+                break;
+            case 's':
+                spec.stride = atoi(optarg);
+                break;
+            case 'r':
+                spec.gpu_register = true;
+                break;
+            case 'l':
+                spec.mlock = true;
+                break;
+            case 'u':
+                spec.unmap = false;
+                break;
+            default:
+                std::cerr << "usage: " << argv[0] << " [-n pages] [-s stride] [-rlu]" << std::endl;
+                return 1;
+        }
+    }
 
     // Warmup
     for (int i = 0; i < 10; i++)
-        test(pages, stride);
+        test(spec);
 
     for (int i = 0; i < 100; i++)
-        std::cout << test(pages, stride) << std::endl;
+        std::cout << test(spec) << std::endl;
 }
