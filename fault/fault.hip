@@ -35,8 +35,10 @@ struct spec {
     size_t pages;
     size_t stride;
     bool gpu_register;
+    bool gpu_map;
     bool mlock;
     bool unmap;
+    bool touch;
 };
 
 long test(spec spec)
@@ -49,14 +51,25 @@ long test(spec spec)
     //float *a = (float *)malloc(bytes);
     float *a = (float *)mmap(NULL, bytes, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
     CHECK(a != MAP_FAILED);
+    size_t n = bytes / sizeof(float);
 
     if (spec.mlock)
         CHECK(!mlock(a, bytes));
 
-    if (spec.gpu_register)
-        CHECK_HIP(hipHostRegister(a, bytes, hipHostRegisterDefault));
+    if (spec.touch)
+#pragma omp parallel for
+        for (size_t i = 0; i < n; i++)
+            a[i] = 0;
 
-    size_t n = bytes / sizeof(float);
+    if (spec.gpu_map) {
+        void *b;
+        CHECK_HIP(hipHostRegister(a, bytes, hipHostRegisterMapped));
+        CHECK_HIP(hipHostGetDevicePointer(&b, a, 0));
+        a = (float *)b;
+    } else if (spec.gpu_register) {
+        CHECK_HIP(hipHostRegister(a, bytes, hipHostRegisterDefault));
+    }
+
     size_t threads = (n+spec.stride-1) / spec.stride;
     CHECK(threads > 0);
 
@@ -84,11 +97,13 @@ int main(int argc, char **argv)
         .pages = 1,
         .stride = (size_t)getpagesize(),
         .gpu_register = false,
+        .gpu_map = false,
         .mlock = false,
         .unmap = true,
+        .touch = false,
     };
 
-    for (int opt; (opt = getopt(argc, argv, "n:s:rlu")) != -1;) {
+    for (int opt; (opt = getopt(argc, argv, "n:s:rlutm")) != -1;) {
         switch (opt) {
             case 'n':
                 spec.pages = atoi(optarg);
@@ -99,14 +114,20 @@ int main(int argc, char **argv)
             case 'r':
                 spec.gpu_register = true;
                 break;
+            case 'm':
+                spec.gpu_map = true;
+                break;
             case 'l':
                 spec.mlock = true;
                 break;
             case 'u':
                 spec.unmap = false;
                 break;
+            case 't':
+                spec.touch = true;
+                break;
             default:
-                std::cerr << "usage: " << argv[0] << " [-n pages] [-s stride] [-rlu]" << std::endl;
+                std::cerr << "usage: " << argv[0] << " [-n pages] [-s stride] [-rlutm]" << std::endl;
                 return 1;
         }
     }
