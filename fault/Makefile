@@ -19,7 +19,7 @@ nofaultx-%.dat:
 	HSA_XNACK=1 $(CMD) -r > $@
 
 minor-%.dat:
-	jSA_XNACK=1 $(CMD) -l > $@
+	HSA_XNACK=1 $(CMD) -l > $@
 
 nominor-%.dat:
 	HSA_XNACK=0 $(CMD) -lr > $@
