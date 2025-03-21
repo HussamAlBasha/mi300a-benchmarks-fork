@@ -178,7 +178,7 @@ int main(int argc, char **argv)
 {
     spec spec = {
         .pages = 1,
-        .stride = (size_t)getpagesize(),
+        .stride = (size_t)getpagesize() / sizeof(float),
         .gpu_register = false,
         .gpu_map = false,
         .mlock = false,
