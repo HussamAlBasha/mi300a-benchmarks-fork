@@ -97,6 +97,7 @@ typedef union {
 } per_thread_t;
 
 void chase_simple_kernel_gpu(per_thread_t *t);
+void *alloc_gpu(const char *s, size_t n);
 
 int always_zero;
 
@@ -850,8 +851,13 @@ int main(int argc, char **argv) {
   generate_chase_mixer(&genchase_args, nr_threads * chase->parallelism);
 
   // generate the chases by launching multiple threads
+  char *alloc_string = getenv("ALLOC");
   char *numa_string = getenv("NUMA_ALLOC");
-  if (numa_string != NULL) {
+  if (alloc_string) {
+    if (verbosity > 0)
+      printf("ALLOC: %s\n", alloc_string);
+    genchase_args.arena = (char *)alloc_gpu(alloc_string, genchase_args.total_memory + offset) + offset;
+  } else if (numa_string != NULL) {
     int numa_node = atoi(numa_string);
     genchase_args.arena = (char *)numa_alloc_onnode(genchase_args.total_memory + offset, numa_node) +
         offset;

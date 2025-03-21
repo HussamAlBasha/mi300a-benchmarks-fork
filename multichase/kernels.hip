@@ -6,6 +6,7 @@
 #include "timer.h"
 #include "util.h"
 #include <stdio.h>
+#include "../util.h"
 
 #ifdef __i386__
 #define MAX_PARALLEL (6)  // maximum number of chases in parallel
@@ -60,6 +61,26 @@ __global__ void chase_simple_kernel(per_thread_t *t) {
 extern "C" {
     void chase_simple_kernel_gpu(per_thread_t *t) {
         chase_simple_kernel<<<1, 1>>>(t);
-        hipDeviceSynchronize();
+        CHECK_HIP(hipDeviceSynchronize());
+    }
+
+    void *alloc_gpu(const char *s, size_t n) {
+      void *p = NULL;
+      if (!strcmp(s, "malloc")) {
+        p = malloc(n);
+      } else if (!strcmp(s, "hipMalloc")) {
+        CHECK_HIP(hipMalloc(&p, n));
+      } else if (!strcmp(s, "hipHostMalloc")) {
+        CHECK_HIP(hipHostMalloc(&p, n));
+      } else if (!strcmp(s, "hipMallocManaged")) {
+        CHECK_HIP(hipMallocManaged(&p, n));
+      } else if (!strcmp(s, "malloc+register")) {
+        p = malloc(n);
+        CHECK_HIP(hipHostRegister(p, n, hipHostRegisterDefault));
+      } else {
+        CHECK(!"unknown ALLOC");
+      }
+
+      return p;
     }
 }
