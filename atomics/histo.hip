@@ -1,133 +1,244 @@
-#include "hip/hip_runtime.h"
+#include <hip/hip_runtime.h>
+#include <rocrand/rocrand.h>
+#include <rocrand/rocrand_xorwow.h>
 #include <iostream>
 #include <random>
 #include <thread>
 #include <unistd.h>
+#include <stdint.h>
+#include <time.h>
+#include <signal.h>
 #include "../util.h"
 
+const int GRANUL = 200;
+
 template<typename T, bool system>
-__global__ void kernel(T *table, size_t n)
+__global__ void gpu_kernel(T *table, size_t table_size, size_t n, unsigned long long seed, size_t *count)
 {
+    int tid = blockIdx.x * blockDim.x + threadIdx.x;
+
+    rocrand_state_xorwow rand;
+    rocrand_init(seed, tid, 0, &rand);
+
     for (size_t i = 0; i < n; i++) {
-        size_t k = 0;
+        size_t k = rocrand(&rand) % table_size;
 
         if (system)
             atomicAdd_system(table+k, 1);
         else
             atomicAdd(table+k, 1);
+
+        if (GRANUL && (i % GRANUL == 0))
+            atomicAdd_system(count, 1);
     }
 }
 
-template<typename T>
-bool run(size_t table_size, size_t total, int threads_cpu, int threads_gpu, int tpb)
+template<typename T, int order>
+void cpu_kernel(T *table, size_t table_size, size_t thread_total, size_t *count)
 {
-    T *table = new T[table_size];
+    std::random_device seed;
+    std::minstd_rand rand(seed());
+    std::uniform_int_distribution<size_t> distrib(0, table_size-1);
 
-    for (size_t i = 0; i < table_size; i++)
+    for (size_t i = 0; i < thread_total; i++) {
+        size_t k = distrib(rand);
+        __atomic_fetch_add(table+k, 1, order);
+
+        if (GRANUL && (i % GRANUL == 0))
+            __atomic_fetch_add(count, 1, __ATOMIC_SEQ_CST);
+    }
+}
+
+struct spec {
+    size_t table_size;
+    size_t total;
+    int threads_cpu;
+    int threads_gpu;
+    int tpb;
+    bool verbose;
+    bool system;
+};
+
+template<typename T>
+bool run(spec spec)
+{
+    T *table = new T[spec.table_size];
+
+    // Cannot allocate on stack with total=0 since kernel runs past return of
+    // this function.
+    auto *gpu_count = new size_t(0);
+    auto *cpu_count = new size_t(0);
+
+    for (size_t i = 0; i < spec.table_size; i++)
         table[i] = 0;
 
-    if (threads_gpu) {
-        int blocks = threads_gpu / tpb;
-        CHECK(blocks*tpb == threads_gpu);
-        size_t n_per_thread = total / threads_gpu;
-        if (threads_cpu && threads_gpu)
-            n_per_thread /= 2;
+    if (spec.threads_gpu) {
+        int blocks = spec.threads_gpu / spec.tpb;
+        CHECK(blocks*spec.tpb == spec.threads_gpu);
 
-        kernel<T, true><<<blocks, tpb>>>(table, n_per_thread);
+        size_t n_per_thread = SIZE_MAX;
+        if (spec.total) {
+            n_per_thread = spec.total / spec.threads_gpu;
+            if (spec.threads_cpu && spec.threads_gpu)
+                n_per_thread /= 2;
+        }
+
+        std::random_device seed;
+
+        if (spec.system)
+            gpu_kernel<T, true> <<<blocks, spec.tpb>>>(table, spec.table_size, n_per_thread, seed(), gpu_count);
+        else
+            gpu_kernel<T, false><<<blocks, spec.tpb>>>(table, spec.table_size, n_per_thread, seed(), gpu_count);
     }
 
-    int order = __ATOMIC_SEQ_CST;
-
     std::vector<std::thread> threads;
-    if (threads_cpu) {
-        size_t thread_total = total / threads_cpu;
-        if (threads_cpu && threads_gpu)
-            thread_total /= 2;
+    if (spec.threads_cpu) {
+        size_t thread_total = SIZE_MAX;
+        if (spec.total) {
+            thread_total = spec.total / spec.threads_cpu;
+            if (spec.threads_cpu && spec.threads_gpu)
+                thread_total /= 2;
+        }
 
-        for (int tid = 0; tid < threads_cpu; tid++) {
-            threads.emplace_back([table, order, table_size](size_t thread_total) {
-                std::random_device seed;
-                std::minstd_rand rand(seed());
-                std::uniform_int_distribution<size_t> distrib(0, table_size-1);
+        for (int tid = 0; tid < spec.threads_cpu; tid++) {
+            threads.emplace_back(cpu_kernel<T, __ATOMIC_SEQ_CST>, table, spec.table_size, thread_total, cpu_count);
 
-                for (size_t i = 0; i < thread_total; i++) {
-                    size_t k = distrib(rand);
-                    __atomic_fetch_add(table+k, 1, order);
-                }
-            }, thread_total);
+            if (!spec.total)
+                threads.back().detach();
         }
     }
 
-    if (threads_gpu)
-        CHECK_HIP(hipDeviceSynchronize());
-
-    for (auto& thread: threads)
-        thread.join();
-
-    T sum = 0;
-    for (size_t i = 0; i < table_size; i++)
-        sum += table[i];
-
     bool ok = true;
-    if (sum != total) {
-        std::cerr << "validation failed: sum = " << sum << std::endl;
-        ok = false;
+
+    if (spec.total) {
+        if (spec.threads_gpu)
+            CHECK_HIP(hipDeviceSynchronize());
+
+        for (auto& thread: threads)
+            thread.join();
+
+        T sum = 0;
+        for (size_t i = 0; i < spec.table_size; i++)
+            sum += table[i];
+
+        if (sum != spec.total) {
+            std::cerr << "validation failed: sum = " << sum << std::endl;
+            ok = false;
+        } else {
+            std::cerr << "ok" << std::endl;
+        }
+
+        if (spec.verbose) {
+            for (size_t i = 0; i < spec.table_size; i++)
+                std::cout << table[i] << " ";
+            std::cout << std::endl;
+        }
+        
+        delete[] table;
+    } else {
+        const uint64_t NS = 1000000000ULL;
+
+        timespec sleep_time = {.tv_sec = 1};
+        CHECK(!nanosleep(&sleep_time, NULL));
+
+        timespec t0;
+        clock_gettime(CLOCK_MONOTONIC, &t0);
+
+        size_t gpu0 = __atomic_load_n(gpu_count, __ATOMIC_SEQ_CST);
+        size_t cpu0 = __atomic_load_n(cpu_count, __ATOMIC_SEQ_CST);
+
+        CHECK(!nanosleep(&sleep_time, NULL));
+
+        size_t gpu1 = __atomic_load_n(gpu_count, __ATOMIC_SEQ_CST);
+        size_t cpu1 = __atomic_load_n(cpu_count, __ATOMIC_SEQ_CST);
+
+        timespec t1;
+        clock_gettime(CLOCK_MONOTONIC, &t1);
+
+        uint64_t t_ns = NS*(t1.tv_sec-t0.tv_sec) + (t1.tv_nsec-t0.tv_nsec);
+        double t_s = t_ns / (double)NS;
+
+        double gpu_rate = GRANUL*(gpu1-gpu0)/t_s;
+        double cpu_rate = GRANUL*(cpu1-cpu0)/t_s;
+
+        std::cout << "gpu: " << gpu_rate << std::endl;
+        std::cout << "cpu: " << cpu_rate << std::endl;
     }
-    
-    delete[] table;
 
     return ok;
 }
 
+void usage(const char *argv0)
+{
+    std::cerr
+        << "usage: " << argv0 << " [options]\n"
+        << "\n"
+        << " -c threads_cpu\n"
+        << " -g threads_gpu\n"
+        << " -b gpu_tpb\n"
+        << " -s table_size\n"
+        << " -t total_updates   (0 for timing)\n"
+        << " -d data_type       (u32, u64, f32, f64)\n"
+        << " -v                 verbose validation\n"
+        << " -S                 no system-wide atomics on GPU\n"
+        ;
+}
+
 int main(int argc, char **argv)
 {
-    size_t table_size = 1024;
-    size_t total = 1000000;
-
-    int threads_cpu = 0;
-    int threads_gpu = 0;
-
-    int tpb = 1;
-
+    spec spec = {
+        .table_size = 1024,
+        .total = 1000000,
+        .threads_cpu = 0,
+        .threads_gpu = 0,
+        .tpb = 1,
+        .verbose = false,
+        .system = true,
+    };
     const char *type = "u32";
 
-    const char *opts = "c:g:s:t:d:";
+    const char *opts = "vSc:g:s:t:d:b:";
     for (int opt; (opt = getopt(argc, argv, opts)) != -1;) {
         switch (opt) {
+            case 'v':
+                spec.verbose = true;
+                break;
+            case 'S':
+                spec.system = false;
+                break;
             case 'c':
-                threads_cpu = atoi(optarg);
+                spec.threads_cpu = atoi(optarg);
                 break;
             case 'g':
-                threads_gpu = atoi(optarg);
+                spec.threads_gpu = atoi(optarg);
+                break;
+            case 'b':
+                spec.tpb = atoi(optarg);
                 break;
             case 's':
-                table_size = strtoul(optarg, NULL, 0);
+                spec.table_size = strtoul(optarg, NULL, 0);
                 break;
             case 't':
-                total = strtoul(optarg, NULL, 0);
+                spec.total = strtoul(optarg, NULL, 0);
                 break;
             case 'd':
                 type = optarg;
                 break;
             default:
-                std::cerr << "usage: " << argv[0]
-                    << " [-c threads_cpu] [-g threads_gpu]"
-                    << " [-s table_size] [-t total]"
-                    << " [-d datatype]"
-                    << std::endl;
+                usage(argv[0]);
                 return 1;
         }
     }
 
     bool ok;
     if (!strcmp(type, "u32"))
-        ok = run<uint32_t>(table_size, total, threads_cpu, threads_gpu, tpb);
+        ok = run<uint32_t>(spec);
     else if (!strcmp(type, "u64"))
-        ok = run<uint64_t>(table_size, total, threads_cpu, threads_gpu, tpb);
+        ok = run<uint64_t>(spec);
     else if (!strcmp(type, "f32"))
-        ok = run<float>(table_size, total, threads_cpu, threads_gpu, tpb);
+        ok = run<float>(spec);
     else if (!strcmp(type, "f64"))
-        ok = run<double>(table_size, total, threads_cpu, threads_gpu, tpb);
+        ok = run<double>(spec);
     else {
         std::cerr << "unknown datatype '" << type << "'" << std::endl;
         return 1;
@@ -135,4 +246,9 @@ int main(int argc, char **argv)
 
     if (!ok)
         return 1;
+
+    if (!spec.total && spec.threads_gpu) {
+        // HIP runtime waits for kernels to finish as exit handler...
+        _exit(0);
+    }
 }
