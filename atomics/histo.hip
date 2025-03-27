@@ -57,17 +57,26 @@ struct spec {
     int tpb;
     bool verbose;
     bool system;
+    bool hip_malloc;
 };
 
 template<typename T>
 bool run(spec spec)
 {
-    T *table = new T[spec.table_size];
+    T *table;
+    if (spec.hip_malloc)
+        CHECK_HIP(hipMalloc(&table, spec.table_size * sizeof(*table)));
+    else
+        table = new T[spec.table_size];
 
     // Cannot allocate on stack with total=0 since kernel runs past return of
     // this function.
-    auto *gpu_count = new size_t(0);
-    auto *cpu_count = new size_t(0);
+    // Pad to cache line size to avoid false sharing
+    size_t *gpu_count;
+    size_t *cpu_count;
+
+    CHECK_HIP(hipMalloc(&gpu_count, 128));
+    CHECK_HIP(hipMalloc(&cpu_count, 128));
 
     for (size_t i = 0; i < spec.table_size; i++)
         table[i] = 0;
@@ -134,7 +143,10 @@ bool run(spec spec)
             std::cout << std::endl;
         }
         
-        delete[] table;
+        if (spec.hip_malloc)
+            CHECK_HIP(hipFree(table));
+        else
+            delete[] table;
     } else {
         const uint64_t NS = 1000000000ULL;
 
@@ -181,6 +193,7 @@ void usage(const char *argv0)
         << " -d data_type       (u32, u64, f32, f64)\n"
         << " -v                 verbose validation\n"
         << " -S                 no system-wide atomics on GPU\n"
+        << " -H                 use hipMalloc\n"
         ;
 }
 
@@ -194,10 +207,11 @@ int main(int argc, char **argv)
         .tpb = 1,
         .verbose = false,
         .system = true,
+        .hip_malloc = false,
     };
     const char *type = "u32";
 
-    const char *opts = "vSc:g:s:t:d:b:";
+    const char *opts = "vSHc:g:s:t:d:b:";
     for (int opt; (opt = getopt(argc, argv, opts)) != -1;) {
         switch (opt) {
             case 'v':
@@ -205,6 +219,9 @@ int main(int argc, char **argv)
                 break;
             case 'S':
                 spec.system = false;
+                break;
+            case 'H':
+                spec.hip_malloc = true;
                 break;
             case 'c':
                 spec.threads_cpu = atoi(optarg);
