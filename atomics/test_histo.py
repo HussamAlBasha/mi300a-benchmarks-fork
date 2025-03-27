@@ -49,3 +49,6 @@ def test_cpu_gpu_no_system():
 
 def test_hip_malloc():
     run(["-c", "1", "-g", "1", "-H"], xnack=0)
+
+def test_relaxed():
+    run(["-c", "24", "-g", "1024", "-r"])

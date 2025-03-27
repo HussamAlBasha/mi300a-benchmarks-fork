@@ -58,6 +58,7 @@ struct spec {
     bool verbose;
     bool system;
     bool hip_malloc;
+    bool relaxed;
 };
 
 template<typename T>
@@ -110,7 +111,10 @@ bool run(spec spec)
         }
 
         for (int tid = 0; tid < spec.threads_cpu; tid++) {
-            threads.emplace_back(cpu_kernel<T, __ATOMIC_SEQ_CST>, table, spec.table_size, thread_total, cpu_count);
+            if (spec.relaxed)
+                threads.emplace_back(cpu_kernel<T, __ATOMIC_RELAXED>, table, spec.table_size, thread_total, cpu_count);
+            else
+                threads.emplace_back(cpu_kernel<T, __ATOMIC_SEQ_CST>, table, spec.table_size, thread_total, cpu_count);
 
             if (!spec.total)
                 threads.back().detach();
@@ -194,6 +198,7 @@ void usage(const char *argv0)
         << " -v                 verbose validation\n"
         << " -S                 no system-wide atomics on GPU\n"
         << " -H                 use hipMalloc\n"
+        << " -r                 relaxed atomic order on CPU\n"
         ;
 }
 
@@ -208,10 +213,11 @@ int main(int argc, char **argv)
         .verbose = false,
         .system = true,
         .hip_malloc = false,
+        .relaxed = false,
     };
     const char *type = "u32";
 
-    const char *opts = "vSHc:g:s:t:d:b:";
+    const char *opts = "vSHrc:g:s:t:d:b:";
     for (int opt; (opt = getopt(argc, argv, opts)) != -1;) {
         switch (opt) {
             case 'v':
@@ -222,6 +228,9 @@ int main(int argc, char **argv)
                 break;
             case 'H':
                 spec.hip_malloc = true;
+                break;
+            case 'r':
+                spec.relaxed = true;
                 break;
             case 'c':
                 spec.threads_cpu = atoi(optarg);
