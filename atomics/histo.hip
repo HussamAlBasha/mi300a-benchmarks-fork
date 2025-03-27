@@ -230,6 +230,23 @@ int main(int argc, char **argv)
         }
     }
 
+    if (spec.total) {
+        size_t mult = 0;
+        if (spec.threads_cpu && spec.threads_gpu)
+            mult = 2 * std::lcm(spec.threads_cpu, spec.threads_gpu);
+        else if (spec.threads_cpu)
+            mult = spec.threads_cpu;
+        else if (spec.threads_gpu)
+            mult = spec.threads_gpu;
+
+        if (mult) {
+            size_t new_total = ((spec.total+mult-1) / mult) * mult;
+            if (spec.total != new_total)
+                std::cerr << "rounding total from " << spec.total << " to " << new_total << std::endl;
+            spec.total = new_total;
+        }
+    }
+
     bool ok;
     if (!strcmp(type, "u32"))
         ok = run<uint32_t>(spec);
