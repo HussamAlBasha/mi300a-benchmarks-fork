@@ -154,7 +154,7 @@ bool run(spec spec)
     } else {
         const uint64_t NS = 1000000000ULL;
 
-        timespec sleep_time = {.tv_sec = 1};
+        timespec sleep_time = {.tv_nsec = NS/2};
         CHECK(!nanosleep(&sleep_time, NULL));
 
         timespec t0;
@@ -177,8 +177,7 @@ bool run(spec spec)
         double gpu_rate = GRANUL*(gpu1-gpu0)/t_s;
         double cpu_rate = GRANUL*(cpu1-cpu0)/t_s;
 
-        std::cout << "gpu: " << gpu_rate << std::endl;
-        std::cout << "cpu: " << cpu_rate << std::endl;
+        std::cout << gpu_rate << '\t' << cpu_rate << std::endl;
     }
 
     return ok;
