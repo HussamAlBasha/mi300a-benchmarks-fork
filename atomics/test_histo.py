@@ -52,3 +52,6 @@ def test_hip_malloc():
 
 def test_relaxed():
     run(["-c", "24", "-g", "1024", "-r"])
+
+def test_fast_hybrid():
+    run(["-c", "6", "-g", "5376", "-d", "u64", "-s", "1024", "-b", "64"])
