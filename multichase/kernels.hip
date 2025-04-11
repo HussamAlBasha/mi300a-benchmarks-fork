@@ -70,6 +70,10 @@ extern "C" {
         p = malloc(n);
       } else if (!strcmp(s, "hipMalloc")) {
         CHECK_HIP(hipMalloc(&p, n));
+      } else if (!strcmp(s, "remote")) {
+        CHECK_HIP(hipSetDevice(1));
+        CHECK_HIP(hipMalloc(&p, n));
+        CHECK_HIP(hipSetDevice(0));
       } else if (!strcmp(s, "hipHostMalloc")) {
         CHECK_HIP(hipHostMalloc(&p, n));
       } else if (!strcmp(s, "hipMallocManaged")) {
