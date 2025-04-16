@@ -190,7 +190,14 @@ static STREAM_TYPE	a[STREAM_ARRAY_SIZE+OFFSET],
 			b[STREAM_ARRAY_SIZE+OFFSET],
 			c[STREAM_ARRAY_SIZE+OFFSET];
 */
+#ifdef STATIC_MANAGED
+static STREAM_TYPE __managed__
+			a[STREAM_ARRAY_SIZE+OFFSET],
+			b[STREAM_ARRAY_SIZE+OFFSET],
+			c[STREAM_ARRAY_SIZE+OFFSET];
+#else
 static STREAM_TYPE	*a = 0, *b = 0, *c = 0;
+#endif
 
 static double	avgtime[4] = {0}, maxtime[4] = {0},
 		mintime[4] = {FLT_MAX,FLT_MAX,FLT_MAX,FLT_MAX};
@@ -249,10 +256,12 @@ main(int argc, char **argv)
     STREAM_TYPE		scalar;
     double		t, times[4][NTIMES];
 
+#ifndef STATIC_MANAGED
     if (argc != 2) {
 	    printf("select alloc method\n");
 	    return 1;
     }
+#endif
 
     char * env;
     env = getenv("PERF_CTL_FD");
@@ -265,6 +274,8 @@ main(int argc, char **argv)
 	perf_ack_fd = atoi(env);
 
     size_t s = sizeof(STREAM_TYPE) * (STREAM_ARRAY_SIZE+OFFSET);
+
+#ifndef STATIC_MANAGED
     if (!strcmp(argv[1], "malloc")) {
 	    a = (STREAM_TYPE *)malloc(s);
 	    b = (STREAM_TYPE *)malloc(s);
@@ -290,6 +301,7 @@ main(int argc, char **argv)
 	    printf("select alloc method\n");
 	    return 1;
     }
+#endif
 
     /* CHECK_ERRNO(madvise(a, s, MADV_HUGEPAGE)); */
     /* CHECK_ERRNO(madvise(b, s, MADV_HUGEPAGE)); */
