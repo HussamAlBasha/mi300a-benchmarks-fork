@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <errno.h>
-#include <hip/hip_runtime.h>
 
 #define FAIL(a) do { std::cerr << "FAIL: " << a << " (" << __FILE__ << ":" << __LINE__ << ")" << std::endl; abort(); } while (0)
 #define CHECK(a) do { if (!(a)) FAIL("check " #a); } while (0)
