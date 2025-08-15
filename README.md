@@ -1,5 +1,5 @@
 # MI300A Benchmarks
-This repository contains benchmarks for characterizing the memory system and the system software for memory management on AMD's MI300A APU. The benchmarks are:
+This repository contains benchmarks for characterizing the memory system and the system software for memory management on AMD's MI300A APU featuring Unified Physical Memory (UPM). The benchmarks are:
 
 * `atomics`: coherence overhead when using atomic operations
 * `coherence`: test of HIP coherence mode
@@ -24,3 +24,5 @@ If you use these benchmarks in your research, please cite the following paper:
   organization={IEEE}
 }
 ```
+
+Contact: jacobwah at kth.se
