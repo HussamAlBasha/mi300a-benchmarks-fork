@@ -26,7 +26,7 @@ sns.violinplot(data=df, x="label", y="lat")
 plt.ylim(0)
 
 plt.xlabel(None)
-plt.ylabel("Latency (us)")
+plt.ylabel("Latency (μs)")
 
 #plt.show()
 plt.savefig("fault_lat_violin.pdf")
