@@ -26,3 +26,7 @@ If you use these benchmarks in your research, please cite the following paper:
 ```
 
 Contact: jacobwah at kth.se
+
+## Additions in this fork
+
+The `experiments/` directory adds scripts used on the MPCDF Viper GPU cluster to reproduce the SPX HIP STREAM bandwidth reported by Wahlgren et al. in [*Dissecting CPU-GPU Unified Physical Memory on AMD MI300A APUs*](https://arxiv.org/abs/2508.12743) and to extend the same benchmark to TPX and CPX. The added experiments measure one logical partition at a time and concurrent partitions covering one MI300A. They also include a customized FP64 TRIAD experiment for comparing isolated and concurrent execution within a shared measurement interval, with `rocprofv3` tracing support. The allocator implementations come from the original benchmark.

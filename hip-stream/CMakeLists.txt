@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.21 FATAL_ERROR)
 project(Stream LANGUAGES CXX)
 include(CTest)
+find_package(MPI REQUIRED COMPONENTS CXX)
 
 set (CMAKE_CXX_STANDARD 14)
 
@@ -34,7 +35,7 @@ set(CMAKE_${GPU_RUNTIME}_STANDARD_REQUIRED ON)
 
 set(CMAKE_${GPU_RUNTIME}_FLAGS_DEBUG "-ggdb")
 
-set(STREAM_CXX_SRCS "")
+set(STREAM_CXX_SRCS mpi.cpp)
 
 set(STREAM_HIP_SRCS stream.hip)
 
@@ -45,6 +46,7 @@ else (DEFINED ENV{HIP_PATH})
 endif (DEFINED ENV{HIP_PATH})
 
 add_executable(stream ${STREAM_CXX_SRCS} ${STREAM_HIP_SRCS} )
+target_link_libraries(stream PRIVATE MPI::MPI_CXX)
 
 # Make example runnable using ctest
 #add_test(NAME Stream COMMAND stream )

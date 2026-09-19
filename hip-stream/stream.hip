@@ -46,6 +46,7 @@ THE SOFTWARE.
 
 #include <string>
 #include <vector>
+#include <cstring>
 
 #include <stdio.h>
 #include <float.h>
