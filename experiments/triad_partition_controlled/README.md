@@ -2,6 +2,16 @@
 
 This experiment compares useful TRIAD throughput when each logical device runs alone and when all logical devices on the first MI300A run concurrently. It was created because summing independently selected HIP STREAM peaks does not show whether those peaks occurred during the same interval.
 
+## Preview the schedule (offline, no GPU)
+
+Before building or submitting, you can inspect exactly what will run. The coordinator's `--dry-run` prints the full predeclared schedule as JSON and needs no ROCm, GPU, or Slurm allocation:
+
+```bash
+python3 run_campaign.py --mode cpx --dry-run   # 343 phases (spx = 98, tpx = 196)
+```
+
+This calls the same `schedule()` used during a real run, so it doubles as a quick sanity check of the planning code. The output lists every phase (`path`, `repeat`, `allocator`, `xnack`, `traced`, `condition`) plus the fixed parameters (elements, block size, batch size, two-second window). Devices appear as placeholders (`device_00`, `device_01`, …) because real BDF/UUID/CPU-core assignment happens only during `--execute` after the topology preflight.
+
 ## Build on Viper
 
 From this directory on an allocated MI300A node:
