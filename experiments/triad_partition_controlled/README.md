@@ -61,7 +61,7 @@ The analyzer checks phase completion, numerical validation, trace timing, worker
 - After 20 warm-up launches, workers continuously issue batches of eight kernels. Complete kernels inside the common two-second interval are counted; 0.2 seconds of work surrounds the interval.
 - The coordinator selects the first physical MI300A by PCI address, verifies the active partition and device topology, and assigns a distinct local CPU core to each worker.
 
-Useful throughput is `24 × elements × completed kernels / 2 seconds`, representing two eight-byte reads and one eight-byte write per TRIAD pass. Traced phases require clock-offset uncertainty no greater than 100 microseconds and at least 90% all-worker overlap. Six valid traced pairs are required for a complete configuration mean.
+Useful throughput is `24 × elements × completed kernels / 2 seconds`, representing two eight-byte reads and one eight-byte write per TRIAD pass. Traced phases require clock-offset uncertainty no greater than 100 microseconds and at least 90% all-worker overlap. Six valid traced pairs define a complete configuration. When at least two valid pairs remain, the analyzer also reports their descriptive mean and sample SD while keeping the configuration marked incomplete.
 
 The 768 MiB working set is fixed per worker, so the total package working set increases from SPX to TPX to CPX. Reported useful bytes are an algorithmic count and do not measure physical HBM transactions.
 

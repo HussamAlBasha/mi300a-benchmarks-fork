@@ -251,19 +251,19 @@ def main():
             issues.append(f'incomplete repeated cell {alloc}/{xnack}')
         values = [r['aggregate_gb_s'] for r in rows]
         summary.append(dict(allocator=alloc, xnack=xnack, valid_pairs=len(rows), complete=complete,
-            mean_gb_s=st.mean(values) if complete else '', repeat_sd_gb_s=st.stdev(values) if complete else '',
+            mean_gb_s=st.mean(values) if values else '', repeat_sd_gb_s=st.stdev(values) if len(values) >= 2 else '',
             minimum_gb_s=min(values) if values else '', maximum_gb_s=max(values) if values else '',
-            mean_spread=st.mean(r['normalized_spread'] for r in rows) if complete else '', mean_device_cv=st.mean(r['device_cv'] for r in rows) if complete else ''))
+            mean_spread=st.mean(r['normalized_spread'] for r in rows) if rows else '', mean_device_cv=st.mean(r['device_cv'] for r in rows) if rows else ''))
     device_summary = []
     for alloc, xnack in manifest['configurations']:
         for bdf in sorted(expected):
             rows = [r for r in device_rows if (r['allocator'], r['xnack'], r['traced'], r['bdf']) == (alloc, xnack, True, bdf)]
             complete = len(rows) == 6 and {r['repeat'] for r in rows} == set(range(1, 7))
             device_summary.append(dict(allocator=alloc, xnack=xnack, bdf=bdf, valid_pairs=len(rows), complete=complete,
-                isolated_mean_gb_s=st.mean(r['isolated_gb_s'] for r in rows) if complete else '',
-                concurrent_mean_gb_s=st.mean(r['concurrent_gb_s'] for r in rows) if complete else '',
-                mean_paired_slowdown=st.mean(r['slowdown'] for r in rows) if complete else '',
-                repeat_sd_slowdown=st.stdev(r['slowdown'] for r in rows) if complete else ''))
+                isolated_mean_gb_s=st.mean(r['isolated_gb_s'] for r in rows) if rows else '',
+                concurrent_mean_gb_s=st.mean(r['concurrent_gb_s'] for r in rows) if rows else '',
+                mean_paired_slowdown=st.mean(r['slowdown'] for r in rows) if rows else '',
+                repeat_sd_slowdown=st.stdev(r['slowdown'] for r in rows) if len(rows) >= 2 else ''))
     overhead = []
     for untraced in (p for p in phases if not p['spec']['traced']):
         s = untraced['spec']
